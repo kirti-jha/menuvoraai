@@ -60,15 +60,15 @@ export default function ContactPage() {
               {
                 icon: Mail,
                 title: "Email us",
-                value: "hello@menuvora.in",
+                value: "menuvoraai@gmail.com",
                 desc: "We reply within 24 hours",
               },
-              {
-                icon: MessageSquare,
-                title: "Live Chat",
-                value: "Chat with us",
-                desc: "Available Mon–Fri, 9am–6pm IST",
-              },
+              // {
+              //   icon: MessageSquare,
+              //   title: "Live Chat",
+              //   value: "Chat with us",
+              //   desc: "Available Mon–Fri, 9am–6pm IST",
+              // },
             ].map((item) => (
               <motion.div
                 key={item.title}
@@ -95,11 +95,13 @@ export default function ContactPage() {
             >
               <p className="text-sm font-bold text-white mb-2">Office</p>
               <p className="text-sm text-[#8888aa] leading-relaxed">
-                Menuvora Technologies Pvt. Ltd.
+                Menuvora AI Systems Pvt. Ltd.
                 <br />
-                HSR Layout, Bangalore
+                Plot No 90, 2nd Floor, Cabin No 1, Sector 14
                 <br />
-                Karnataka, India – 560102
+                Mehrauli Road Gurugram, 
+                <br />
+                Haryana, India – 122001
               </p>
             </motion.div>
           </div>
