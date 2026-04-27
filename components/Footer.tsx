@@ -76,7 +76,7 @@ export function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-[#8888aa]">
-            © {new Date().getFullYear()} Menuvora Technologies Pvt. Ltd. All rights reserved.
+            © {new Date().getFullYear()} Menuvora AI Syetems Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-slow" />
