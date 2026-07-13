@@ -46,8 +46,8 @@ export default function ContactPage() {
             We'd love to <span className="gradient-text">hear from you</span>
           </h1>
           <p className="text-[#8888aa] text-lg">
-            Whether you have a question, feedback, or just want to say hi —
-            we're here for you.
+            Want a website, QR menu, or custom solution for your restaurant?
+            Tell us about your project and we'll get back to you.
           </p>
         </motion.div>
       </div>

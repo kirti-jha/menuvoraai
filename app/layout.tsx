@@ -4,21 +4,22 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Menuvora – AI Business OS",
+  title: "Restaurant Website Development & QR Menu Solutions | Menuvora AI",
   description:
-    "Run your entire business with AI. Content, Leads, Automation & Sales — All in One Platform.",
+    "Menuvora AI builds professional restaurant websites, QR code menu systems, and custom digital solutions for restaurants. Trusted by businesses including Shree Ram Dhaba, HR26 Dhaba, and Kake Da Hotel Delhi.",
   keywords: [
-    "AI tools",
-    "AI business",
-    "content generator",
-    "lead generation",
-    "automation",
-    "SaaS",
+    "restaurant website development",
+    "QR code menu",
+    "digital menu",
+    "restaurant website",
+    "online table reservation",
+    "restaurant SEO",
+    "custom restaurant software",
   ],
   openGraph: {
-    title: "Menuvora – AI Business OS",
+    title: "Restaurant Website Development & QR Menu Solutions | Menuvora AI",
     description:
-      "Run your entire business with AI. Content, Leads, Automation & Sales — All in One Platform.",
+      "Menuvora AI builds professional restaurant websites, QR code menu systems, and custom digital solutions for restaurants.",
     type: "website",
   },
 };

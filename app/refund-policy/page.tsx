@@ -63,16 +63,16 @@ export default function RefundPage() {
           <div className="glass rounded-3xl p-6 sm:p-10 space-y-8">
             {[
               {
-                title: "1. Subscription Refund Window",
-                content: `Menuvora operates on a subscription basis. All subscription plans — Basic, Pro, and Business — are eligible for a refund if requested within 3 to 7 calendar days of the original payment date. This refund window applies to your first payment on each plan. Renewal payments are not eligible for refunds once processed.`,
+                title: "1. Refund Window",
+                content: `All packages — Website, Website + QR Menu, and Custom Solution — are eligible for a refund if requested within 3 to 7 calendar days of the original payment date, provided project work has not yet commenced. This refund window applies to your first payment on each package. Renewal payments are not eligible for refunds once processed.`,
               },
               {
                 title: "2. Eligibility for Refund",
-                content: `To be eligible for a refund, you must: (a) submit a refund request within the 3–7 day window; (b) have used fewer than 20% of your monthly AI credits; (c) not have violated our Terms and Conditions; (d) contact us at refunds@menuvora.in with your registered email and order ID.`,
+                content: `To be eligible for a refund, you must: (a) submit a refund request within the 3–7 day window; (b) request it before design or development work on your project has begun; (c) not have violated our Terms and Conditions; (d) contact us at menuvoraai@gmail.com with your registered email and order ID.`,
               },
               {
                 title: "3. How to Request a Refund",
-                content: `Email refunds@menuvora.in with subject line "Refund Request – [Your Order ID]". Include your registered email address, the plan you purchased, date of payment, and reason for the refund request. We aim to acknowledge all refund requests within 24 hours and process approved refunds within 5–7 business days.`,
+                content: `Email menuvoraai@gmail.com with subject line "Refund Request – [Your Order ID]". Include your registered email address, the package you purchased, date of payment, and reason for the refund request. We aim to acknowledge all refund requests within 24 hours and process approved refunds within 5–7 business days.`,
               },
               {
                 title: "4. Refund Processing",
@@ -92,7 +92,7 @@ export default function RefundPage() {
               },
               {
                 title: "8. Contact for Refund Disputes",
-                content: `If your refund request is denied and you believe this decision is in error, you may escalate by emailing grievance@menuvora.in. All escalations are reviewed by our billing team within 5 business days.`,
+                content: `If your refund request is denied and you believe this decision is in error, you may escalate by emailing menuvoraai@gmail.com with "Refund Escalation" in the subject line. All escalations are reviewed by our team within 5 business days.`,
               },
             ].map((section, i) => (
               <div

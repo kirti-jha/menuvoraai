@@ -11,16 +11,22 @@ const FILTERS = ["all", "basic", "pro", "business"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const FILTER_LABELS: Record<Filter, string> = {
-  all: "All Tools",
-  basic: "Basic",
-  pro: "Pro",
-  business: "Business",
+  all: "All Services",
+  basic: "Website",
+  pro: "Website + QR Menu",
+  business: "Custom",
 };
 
 const PLAN_COLORS: Record<string, string> = {
   basic: "bg-slate-500/15 text-slate-300 border-slate-500/30",
   pro: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
   business: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+};
+
+const PLAN_LABELS: Record<string, string> = {
+  basic: "Website",
+  pro: "QR Menu",
+  business: "Custom",
 };
 
 export default function ProductsPage() {
@@ -43,15 +49,15 @@ export default function ProductsPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <span className="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-4">
-              AI Tools
+              Our Services
             </span>
             <h1 className="text-5xl sm:text-6xl font-heading font-bold text-white mb-4">
-              All{" "}
-              <span className="gradient-text">AI-Powered</span> Tools
+              Restaurant{" "}
+              <span className="gradient-text">Digital</span> Solutions
             </h1>
             <p className="text-[#8888aa] text-lg max-w-xl mx-auto">
-              Everything you need to build, grow, and automate your business.
-              Access depends on your plan.
+              Everything you need to take your restaurant online and grow.
+              Filter by package to see what's included.
             </p>
           </motion.div>
         </div>
@@ -130,7 +136,7 @@ export default function ProductsPage() {
                       )}
                     >
                       <Check className="w-3 h-3" />
-                      {plan.charAt(0).toUpperCase() + plan.slice(1)}
+                      {PLAN_LABELS[plan] ?? plan}
                     </span>
                   ))}
                 </div>
@@ -141,7 +147,7 @@ export default function ProductsPage() {
 
         {filtered.length === 0 && (
           <div className="text-center py-24 text-[#8888aa]">
-            No tools found for this filter.
+            No services found for this filter.
           </div>
         )}
       </section>
@@ -152,10 +158,11 @@ export default function ProductsPage() {
           <div className="orb orb-brand w-48 h-48 -top-10 -left-10 opacity-30" />
           <div className="relative">
             <h2 className="text-3xl font-heading font-bold text-white mb-3">
-              Ready to access all tools?
+              Ready to take your restaurant online?
             </h2>
             <p className="text-[#8888aa] mb-6">
-              Start with Basic at just ₹100 and upgrade as you grow.
+              Start with a website from just ₹100 and add QR menus and custom
+              tools as you grow.
             </p>
             <Link
               href="/checkout"

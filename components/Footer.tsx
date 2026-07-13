@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Zap, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Zap } from "lucide-react";
 
 const FOOTER_LINKS = {
-  Product: [
-    { label: "Features", href: "/products" },
+  Services: [
+    { label: "Our Services", href: "/products" },
     { label: "Pricing", href: "/#pricing" },
     { label: "About", href: "/about" },
   ],
@@ -34,20 +34,9 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-[#8888aa] leading-relaxed max-w-xs">
-              The AI Business OS that powers creators, freelancers, startups,
-              and agencies across India.
+              Helping restaurants grow with smart websites, QR menu solutions,
+              and custom digital tools across India.
             </p>
-            <div className="flex items-center gap-4 mt-6">
-              {[Twitter, Linkedin, Instagram].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 rounded-lg glass-light flex items-center justify-center text-[#8888aa] hover:text-indigo-400 hover:border-indigo-500/40 transition-colors"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Links */}

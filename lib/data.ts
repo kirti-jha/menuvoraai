@@ -1,5 +1,5 @@
 export const NAV_LINKS = [
-  { label: "Products", href: "/products" },
+  { label: "Services", href: "/products" },
   { label: "Pricing", href: "/#pricing" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -7,75 +7,75 @@ export const NAV_LINKS = [
 
 export const FEATURES = [
   {
-    icon: "✍️",
-    title: "AI Content Generator",
+    icon: "🌐",
+    title: "Restaurant Website Development",
     description:
-      "Create blogs, captions, ads, and marketing copy in seconds. Trained on top-performing content across industries.",
+      "Responsive, fast-loading websites that showcase your restaurant beautifully across mobile, tablet, and desktop.",
     plans: ["basic", "pro", "business"],
     color: "from-indigo-500 to-purple-500",
   },
   {
-    icon: "🎨",
-    title: "AI Image Generator",
+    icon: "🍽️",
+    title: "Interactive Food Menu",
     description:
-      "Generate stunning visuals, product mockups, and social media graphics using state-of-the-art diffusion models.",
+      "A stunning digital menu with categories, prices, and item details that keeps customers browsing — and ordering.",
     plans: ["basic", "pro", "business"],
     color: "from-purple-500 to-pink-500",
   },
   {
-    icon: "🎬",
-    title: "AI Video Generator",
+    icon: "📱",
+    title: "QR Code Menu",
     description:
-      "Transform scripts and images into professional videos with AI-driven editing, voiceovers, and transitions.",
+      "Customers scan a QR code to view your full menu instantly on their phone. Update anytime — no reprinting.",
     plans: ["pro", "business"],
     color: "from-pink-500 to-red-500",
   },
   {
-    icon: "🤖",
-    title: "AI Chatbot Builder",
+    icon: "📅",
+    title: "Online Table Reservation",
     description:
-      "Build and deploy custom AI chatbots on your website or app without writing a single line of code.",
-    plans: ["pro", "business"],
+      "Let guests book a table directly from your website. Reduce no-shows and fill your seats every night.",
+    plans: ["basic", "pro", "business"],
     color: "from-cyan-500 to-teal-500",
   },
   {
-    icon: "🎯",
-    title: "AI Lead Generation",
+    icon: "💬",
+    title: "WhatsApp Ordering",
     description:
-      "Find, qualify, and reach your ideal customers automatically. AI identifies high-intent prospects and drafts outreach.",
-    plans: ["business"],
+      "Turn browsers into buyers with one-tap WhatsApp ordering integrated directly into your menu and website.",
+    plans: ["pro", "business"],
     color: "from-emerald-500 to-green-500",
   },
   {
-    icon: "📧",
-    title: "AI Email Marketing",
+    icon: "📍",
+    title: "Google Maps & Location",
     description:
-      "Personalized email campaigns that write themselves. Segment, send, and optimize with AI-driven insights.",
-    plans: ["pro", "business"],
+      "Contact and location integration with Google Maps so customers can find and reach you in seconds.",
+    plans: ["basic", "pro", "business"],
     color: "from-orange-500 to-amber-500",
   },
   {
-    icon: "⚡",
-    title: "Automation Dashboard",
+    icon: "🔍",
+    title: "SEO Optimization",
     description:
-      "Connect your entire workflow. Trigger AI actions based on events, schedule tasks, and monitor performance.",
-    plans: ["business"],
+      "Rank higher on Google and get discovered by hungry customers searching for restaurants near them.",
+    plans: ["basic", "pro", "business"],
     color: "from-violet-500 to-indigo-500",
   },
   {
-    icon: "📄",
-    title: "Resume Builder",
+    icon: "🛠️",
+    title: "Restaurant Management System",
     description:
-      "AI-crafted professional resumes and cover letters tailored for the job description you're targeting.",
-    plans: ["basic", "pro", "business"],
+      "Custom order management dashboards and digital menu management tools built around how your restaurant runs.",
+    plans: ["business"],
     color: "from-sky-500 to-blue-500",
   },
   {
-    icon: "📱",
-    title: "Social Media Tools",
+    icon: "🎁",
+    title: "Customer Loyalty Programs",
     description:
-      "Schedule posts, generate captions, and analyze engagement across all major platforms from one dashboard.",
-    plans: ["pro", "business"],
+      "Keep customers coming back with digital loyalty programs and business automation tools tailored to your brand.",
+    plans: ["business"],
     color: "from-fuchsia-500 to-purple-500",
   },
 ];
@@ -83,8 +83,8 @@ export const FEATURES = [
 export const PRICING_PLANS = [
   {
     id: "basic",
-    name: "Basic",
-    tagline: "Perfect to get started",
+    name: "Website",
+    tagline: "Get your restaurant online fast",
     prices: {
       monthly: { amount: 100, label: "₹100" },
       quarterly: { amount: 250, label: "₹250" },
@@ -94,19 +94,20 @@ export const PRICING_PLANS = [
     popular: false,
     color: "from-slate-600 to-slate-700",
     features: [
-      "500 AI credits / month",
-      "AI Content Generator",
-      "AI Image Generator (basic)",
-      "Resume Builder",
-      "3 projects",
+      "Responsive restaurant website",
+      "Interactive food menu",
+      "Online table reservation",
+      "Contact & Google Maps integration",
+      "Mobile-friendly design",
+      "Basic SEO setup",
       "Email support",
     ],
     cta: "Start for ₹100",
   },
   {
     id: "pro",
-    name: "Pro",
-    tagline: "For serious creators & teams",
+    name: "Website + QR Menu",
+    tagline: "The complete digital package",
     prices: {
       monthly: { amount: 1000, label: "₹1,000" },
       quarterly: { amount: 2500, label: "₹2,500" },
@@ -116,21 +117,20 @@ export const PRICING_PLANS = [
     popular: true,
     color: "from-indigo-500 to-purple-600",
     features: [
-      "Everything in Basic",
-      "5,000 AI credits / month",
-      "AI Video Generator",
-      "AI Chatbot Builder",
-      "Social Media Tools",
-      "AI Email Marketing",
-      "Priority email support",
-      "Unlimited projects",
+      "Everything in Website",
+      "QR code digital menu",
+      "Unlimited menu updates",
+      "WhatsApp ordering",
+      "Full SEO optimization",
+      "Fast & secure hosting",
+      "Priority support",
     ],
-    cta: "Get Pro",
+    cta: "Get QR Menu",
   },
   {
     id: "business",
-    name: "Business",
-    tagline: "Full AI OS for your company",
+    name: "Custom Solution",
+    tagline: "Tailored for your restaurant brand",
     prices: {
       monthly: { amount: 10000, label: "₹10,000" },
       quarterly: { amount: 25000, label: "₹25,000" },
@@ -140,86 +140,109 @@ export const PRICING_PLANS = [
     popular: false,
     color: "from-violet-600 to-indigo-700",
     features: [
-      "Everything in Pro",
-      "Unlimited AI credits",
-      "AI Lead Generation System",
-      "AI Sales Chatbot",
-      "Automation Dashboard",
-      "Custom AI Agents",
+      "Everything in Website + QR Menu",
+      "Restaurant management system",
+      "Order management dashboard",
+      "Customer loyalty program",
+      "Business automation tools",
+      "Custom web applications",
       "Dedicated account manager",
-      "Priority 24/7 support",
-      "White-label options",
+      "24/7 priority support",
     ],
-    cta: "Go Business",
+    cta: "Request a Quote",
   },
 ];
 
 export const TESTIMONIALS = [
   {
-    name: "Priya Sharma",
-    role: "Founder, ContentFlow Agency",
-    avatar: "PS",
-    review:
-      "Menuvora cut our content production time by 80%. What used to take a team of 5 writers now happens in minutes. Our clients are blown away by the quality.",
-    rating: 5,
-    plan: "Business",
-  },
-  {
-    name: "Arjun Mehta",
-    role: "Freelance Designer & Creator",
-    avatar: "AM",
-    review:
-      "The AI Image Generator alone is worth the price. I've replaced 3 separate subscriptions with just Menuvora. My output is 10x what it used to be.",
-    rating: 5,
-    plan: "Pro",
-  },
-  {
-    name: "Sneha Reddy",
-    role: "Marketing Lead, TechStart India",
-    avatar: "SR",
-    review:
-      "We launched our entire email marketing campaign using Menuvora in one afternoon. The AI understood our brand voice perfectly. Incredible tool.",
-    rating: 5,
-    plan: "Business",
-  },
-  {
-    name: "Rohan Kapoor",
-    role: "Solo Startup Founder",
+    name: "Rajesh Kumar",
+    role: "Owner, Spice Garden Café",
     avatar: "RK",
     review:
-      "Started with the Basic plan at ₹100 just to try it out. Upgraded to Pro within a week. The chatbot builder alone helped me convert 40% more leads.",
+      "Menuvora built us a beautiful website and QR menu in under two weeks. Customers love scanning the code, and we update our specials in seconds without reprinting anything.",
     rating: 5,
-    plan: "Pro",
+    plan: "Website + QR Menu",
+  },
+  {
+    name: "Meena Nair",
+    role: "Manager, Coastal Kitchen",
+    avatar: "MN",
+    review:
+      "Online reservations and WhatsApp ordering have genuinely increased our footfall. The site loads fast on mobile and we started showing up on Google for nearby searches.",
+    rating: 5,
+    plan: "Website + QR Menu",
+  },
+  {
+    name: "Harpreet Singh",
+    role: "Owner, Punjabi Rasoi",
+    avatar: "HS",
+    review:
+      "They understood exactly how a dhaba operates and built a custom management dashboard around it. Fast delivery, clean design, and support whenever we need it.",
+    rating: 5,
+    plan: "Custom Solution",
+  },
+  {
+    name: "Aditya Verma",
+    role: "Founder, Urban Bites Cloud Kitchen",
+    avatar: "AV",
+    review:
+      "As a cloud kitchen, our menu is everything. The digital QR menu and order management tools Menuvora built have made our operations far smoother.",
+    rating: 5,
+    plan: "Custom Solution",
+  },
+];
+
+export const CLIENTS = [
+  {
+    name: "Shree Ram Dhaba",
+    description:
+      "Custom restaurant website and digital business solutions.",
+    icon: "🍛",
+    gradient: "from-amber-500/20 to-orange-500/20",
+  },
+  {
+    name: "HR26 Dhaba",
+    description:
+      "Tailored web development and online presence enhancements.",
+    icon: "🍲",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+  },
+  {
+    name: "Kake Da Hotel, Delhi",
+    description:
+      "Customized digital solutions supporting restaurant operations and customer engagement.",
+    icon: "🍽️",
+    gradient: "from-indigo-500/20 to-purple-500/20",
   },
 ];
 
 export const USE_CASES = [
   {
-    icon: "🎨",
-    title: "Creators",
+    icon: "☕",
+    title: "Cafés",
     description:
-      "Generate content, images, and videos at scale. Stay consistent, grow faster, and monetize your creativity.",
+      "Cozy, mobile-first websites and QR menus that match your café's vibe and keep regulars coming back.",
     gradient: "from-pink-500/20 to-purple-500/20",
   },
   {
-    icon: "💼",
-    title: "Freelancers",
+    icon: "🍷",
+    title: "Fine Dining",
     description:
-      "Deliver more to clients faster. Build a premium reputation with AI-powered work that looks handcrafted.",
+      "Elegant websites with reservations and rich menus that reflect a premium dining experience.",
     gradient: "from-indigo-500/20 to-blue-500/20",
   },
   {
-    icon: "🚀",
-    title: "Startups",
+    icon: "🍛",
+    title: "Dhabas",
     description:
-      "Move at startup speed without a big team. Marketing, sales, and support — all automated with AI.",
+      "Simple, fast digital menus and websites that bring traditional dhabas online with zero hassle.",
     gradient: "from-emerald-500/20 to-teal-500/20",
   },
   {
-    icon: "🏢",
-    title: "Agencies",
+    icon: "🍔",
+    title: "Cloud Kitchens",
     description:
-      "Scale client deliverables without scaling headcount. White-label AI that makes you look like a genius.",
+      "QR menus, WhatsApp ordering, and order dashboards built for delivery-first, digital-native kitchens.",
     gradient: "from-amber-500/20 to-orange-500/20",
   },
 ];
@@ -227,21 +250,21 @@ export const USE_CASES = [
 export const HOW_IT_WORKS = [
   {
     step: "01",
-    title: "Choose a Plan",
+    title: "Share Your Requirements",
     description:
-      "Pick the plan that fits your needs. Start as low as ₹100. Upgrade or downgrade anytime with no lock-in.",
+      "Tell us about your restaurant, your menu, and your goals. Café, fine dining, dhaba, or cloud kitchen — we tailor to you.",
   },
   {
     step: "02",
-    title: "Access AI Tools",
+    title: "We Design & Build",
     description:
-      "Log into your dashboard and get instant access to the full suite of AI tools for your plan tier.",
+      "Our team builds your website and QR menu around your branding and workflow, with fast, secure hosting included.",
   },
   {
     step: "03",
-    title: "Automate & Grow",
+    title: "Launch & Grow",
     description:
-      "Connect your workflows, set automations, and watch your business grow while AI handles the heavy lifting.",
+      "Go live, get discovered on Google, and serve customers better. Update your menu anytime with ongoing support.",
   },
 ];
 

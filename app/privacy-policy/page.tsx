@@ -20,8 +20,8 @@ const sections = [
     content: `We use cookies and similar technologies to maintain sessions, remember preferences, and analyze usage. Essential cookies are required for the Platform to function. Analytics cookies help us improve the service. You can control non-essential cookies through your browser settings.`,
   },
   {
-    title: "6. AI and Content Processing",
-    content: `Content you submit to AI tools is processed to generate outputs. We may use aggregated, anonymized prompts to improve our AI models. We do not share your specific prompts or outputs with other users or third parties. You retain ownership of your generated content.`,
+    title: "6. Restaurant and Menu Content",
+    content: `Content you provide for your project — such as menu items, prices, images, branding, and business details — is used solely to build and operate your website, QR menu, and related digital services. We do not sell or share this content with other parties except as needed to deliver the service. You retain ownership of your business content.`,
   },
   {
     title: "7. Security",
@@ -29,7 +29,7 @@ const sections = [
   },
   {
     title: "8. Your Rights",
-    content: `You have the right to: access your personal data, correct inaccurate data, delete your account and associated data, opt out of marketing communications, and data portability. To exercise these rights, email privacy@menuvora.in. We respond within 30 days.`,
+    content: `You have the right to: access your personal data, correct inaccurate data, delete your account and associated data, opt out of marketing communications, and data portability. To exercise these rights, email menuvoraai@gmail.com. We respond within 30 days.`,
   },
   {
     title: "9. Children's Privacy",
@@ -41,7 +41,7 @@ const sections = [
   },
   {
     title: "11. Contact Us",
-    content: `For privacy-related questions, email us at privacy@menuvora.in or contact: Data Protection Officer, Menuvora Technologies Pvt. Ltd., HSR Layout, Bangalore, Karnataka, India – 560102.`,
+    content: `For privacy-related questions, email us at menuvoraai@gmail.com or contact: Data Protection Officer, Menuvora AI Systems Pvt. Ltd., Plot No 90, 2nd Floor, Cabin No 1, Sector 14, Mehrauli Road, Gurugram, Haryana, India – 122001.`,
   },
 ];
 

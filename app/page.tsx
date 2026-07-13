@@ -19,6 +19,7 @@ import {
   TESTIMONIALS,
   USE_CASES,
   HOW_IT_WORKS,
+  CLIENTS,
 } from "@/lib/data";
 
 export default function HomePage() {
@@ -42,7 +43,7 @@ export default function HomePage() {
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-sm text-[#8888aa]">
-              Now live — AI Business OS for India
+              Restaurant websites & QR menus — built for India
             </span>
             <ChevronRight className="w-4 h-4 text-[#8888aa]" />
           </motion.div>
@@ -54,9 +55,9 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-5xl sm:text-6xl md:text-7xl font-heading font-bold leading-[1.05] mb-6"
           >
-            Run Your Entire{" "}
+            Grow Your Restaurant{" "}
             <br className="hidden sm:block" />
-            <span className="gradient-text">Business with AI</span>
+            with <span className="gradient-text">Smart Websites & QR Menus</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -66,9 +67,10 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl text-[#8888aa] max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Content, Leads, Automation & Sales — All in One Platform.
+            High-performance restaurant websites, QR code menus, and custom
+            digital solutions.
             <br className="hidden sm:block" />
-            Built for creators, freelancers, startups, and agencies.
+            More visibility, better customer experience, smoother operations.
           </motion.p>
 
           {/* CTAs */}
@@ -101,9 +103,9 @@ export default function HomePage() {
             className="flex flex-wrap items-center justify-center gap-8 mt-16"
           >
             {[
-              { icon: Shield, label: "Secure Payments" },
-              { icon: Zap, label: "Instant Access" },
-              { icon: TrendingUp, label: "10x Your Output" },
+              { icon: Shield, label: "Secure & Fast Hosting" },
+              { icon: Zap, label: "Quick Delivery" },
+              { icon: TrendingUp, label: "SEO Optimized" },
             ].map(({ icon: Icon, label }) => (
               <div
                 key={label}
@@ -131,9 +133,9 @@ export default function HomePage() {
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Content Generated", value: "24.8K", change: "+12%" },
-                  { label: "Leads Found", value: "1,240", change: "+34%" },
-                  { label: "Revenue Impact", value: "₹4.2L", change: "+89%" },
+                  { label: "Menu Scans", value: "24.8K", change: "+12%" },
+                  { label: "Online Orders", value: "1,240", change: "+34%" },
+                  { label: "Reservations", value: "480", change: "+89%" },
                 ].map((stat) => (
                   <div key={stat.label} className="glass-light rounded-2xl p-4">
                     <p className="text-xs text-[#8888aa] mb-1">{stat.label}</p>
@@ -148,12 +150,12 @@ export default function HomePage() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <div className="glass-light rounded-2xl p-4 col-span-2 sm:col-span-1">
-                  <p className="text-xs text-[#8888aa] mb-3">AI Activity</p>
+                  <p className="text-xs text-[#8888aa] mb-3">Live Activity</p>
                   <div className="space-y-2">
                     {[
-                      { label: "Blog generated", time: "2m ago", icon: "✍️" },
-                      { label: "Image created", time: "5m ago", icon: "🎨" },
-                      { label: "Lead captured", time: "8m ago", icon: "🎯" },
+                      { label: "QR menu scanned", time: "2m ago", icon: "📱" },
+                      { label: "Order placed", time: "5m ago", icon: "🍽️" },
+                      { label: "Table reserved", time: "8m ago", icon: "📅" },
                     ].map((item) => (
                       <div
                         key={item.label}
@@ -169,12 +171,12 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="glass-light rounded-2xl p-4 hidden sm:block">
-                  <p className="text-xs text-[#8888aa] mb-3">Credits Used</p>
+                  <p className="text-xs text-[#8888aa] mb-3">Menu Views</p>
                   <div className="space-y-2">
                     {[
-                      { label: "Content", pct: 72 },
-                      { label: "Images", pct: 45 },
-                      { label: "Video", pct: 28 },
+                      { label: "Starters", pct: 72 },
+                      { label: "Mains", pct: 45 },
+                      { label: "Desserts", pct: 28 },
                     ].map((item) => (
                       <div key={item.label}>
                         <div className="flex justify-between text-xs mb-1">
@@ -209,14 +211,14 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <span className="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-4">
-              AI Tools
+              Our Services
             </span>
             <h2 className="text-4xl sm:text-5xl font-heading font-bold text-white mb-4">
-              Everything your business needs
+              Everything your restaurant needs online
             </h2>
             <p className="text-[#8888aa] max-w-xl mx-auto">
-              A complete suite of AI-powered tools to replace a dozen separate
-              subscriptions.
+              Professional websites, QR menus, and custom digital tools — all in
+              one place, built around your restaurant.
             </p>
           </motion.div>
 
@@ -246,7 +248,7 @@ export default function HomePage() {
               Who It's For
             </span>
             <h2 className="text-4xl sm:text-5xl font-heading font-bold text-white mb-4">
-              Built for builders
+              Built for every kind of restaurant
             </h2>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -350,6 +352,49 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CLIENTS */}
+      <section className="section relative">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">
+              Our Work
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-heading font-bold text-white mb-4">
+              Restaurants we've worked with
+            </h2>
+            <p className="text-[#8888aa] max-w-xl mx-auto">
+              We've delivered customized digital solutions for restaurants
+              across India, built around each brand and workflow.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {CLIENTS.map((client, i) => (
+              <motion.div
+                key={client.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`glass rounded-2xl p-6 card-hover bg-gradient-to-br ${client.gradient}`}
+              >
+                <div className="text-4xl mb-4">{client.icon}</div>
+                <h3 className="text-lg font-heading font-bold text-white mb-2">
+                  {client.name}
+                </h3>
+                <p className="text-sm text-[#8888aa] leading-relaxed">
+                  {client.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section className="section relative">
         <div className="absolute inset-0 bg-grid opacity-40" />
@@ -364,7 +409,7 @@ export default function HomePage() {
               Testimonials
             </span>
             <h2 className="text-4xl sm:text-5xl font-heading font-bold text-white mb-4">
-              Loved by thousands
+              Loved by restaurants
             </h2>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -388,11 +433,12 @@ export default function HomePage() {
             <div className="orb orb-accent w-48 h-48 bottom-[-60px] left-[-60px] opacity-30" />
             <div className="relative">
               <h2 className="text-3xl sm:text-5xl font-heading font-bold text-white mb-4">
-                Start Using AI to Grow{" "}
-                <span className="gradient-text">Your Business Today</span>
+                Ready to Digitize{" "}
+                <span className="gradient-text">Your Restaurant?</span>
               </h2>
               <p className="text-[#8888aa] mb-8 text-lg">
-                Join thousands of businesses already using Menuvora.
+                From local cafés to established restaurant brands, we build
+                technology that helps you serve customers better and grow online.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -403,10 +449,10 @@ export default function HomePage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/#pricing"
+                  href="/contact"
                   className="px-8 py-4 rounded-xl text-base font-medium glass-light text-white text-center"
                 >
-                  Upgrade Anytime
+                  Talk to Us
                 </Link>
               </div>
             </div>

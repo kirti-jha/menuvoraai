@@ -5,36 +5,36 @@ import { Zap, Globe, Heart, Target } from "lucide-react";
 import Link from "next/link";
 
 const TEAM_STATS = [
-  { label: "Businesses Powered", value: "10,000+" },
-  { label: "AI Outputs Generated", value: "2M+" },
-  { label: "Countries Reached", value: "18" },
+  { label: "Restaurants Served", value: "50+" },
+  { label: "Menus Digitized", value: "100+" },
+  { label: "Cities Reached", value: "12" },
   { label: "Uptime", value: "99.9%" },
 ];
 
 const VALUES = [
   {
     icon: Zap,
-    title: "AI-First",
+    title: "Fast Delivery",
     description:
-      "We believe every business deserves access to the power of artificial intelligence, not just the Fortune 500.",
+      "We get your restaurant online quickly, with fast-loading, secure websites and QR menus that are ready to serve customers.",
   },
   {
     icon: Globe,
-    title: "India-Built",
+    title: "Mobile-First",
     description:
-      "Built in India for the world. Priced for emerging markets, engineered for global scale.",
+      "Most diners find you on their phone. Every site we build is designed mobile-first, then scaled up beautifully to desktop.",
   },
   {
     icon: Heart,
-    title: "Human-Centered",
+    title: "Made for Restaurants",
     description:
-      "AI should amplify human creativity, not replace it. We build tools that make you better at what you do.",
+      "From cafés to dhabas to cloud kitchens, we build around how your restaurant actually operates — not a generic template.",
   },
   {
     icon: Target,
-    title: "Results-Driven",
+    title: "Growth-Driven",
     description:
-      "We measure success by the growth of our customers, not by the features we ship.",
+      "SEO, reservations, and QR menus that drive real footfall and orders. We measure success by your restaurant's growth.",
   },
 ];
 
@@ -56,14 +56,13 @@ export default function AboutPage() {
               Our Story
             </span>
             <h1 className="text-5xl sm:text-6xl font-heading font-bold text-white mb-6">
-              We're building the{" "}
-              <span className="gradient-text">AI-first future</span>{" "}
-              of business
+              We help restaurants{" "}
+              <span className="gradient-text">grow online</span>
             </h1>
             <p className="text-lg text-[#8888aa] leading-relaxed">
-              Menuvora was born from a simple frustration: why do businesses
-              need 12 different subscriptions to access AI tools that should
-              all work together?
+              Menuvora AI specializes in building high-performance restaurant
+              websites and digital QR menu solutions that increase visibility,
+              improve customer experience, and streamline daily operations.
             </p>
           </motion.div>
         </div>
@@ -109,27 +108,26 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-4 text-[#8888aa] leading-relaxed">
               <p>
-                In 2023, our founding team was running a digital marketing
-                agency in Bangalore. We were paying for ChatGPT, Midjourney,
-                Jasper, HubSpot, Zapier, and five other tools — spending over
-                ₹50,000 a month just to stay competitive.
+                The restaurant industry has become increasingly digital.
+                Customers now expect to browse menus, place orders, and interact
+                with restaurants online before they ever walk through the door.
               </p>
               <p>
-                We knew small businesses, freelancers, and solo creators
-                couldn't afford this. They were being left behind by the AI
-                revolution simply because of pricing and complexity.
+                Many restaurants — from local cafés and dhabas to cloud kitchens
+                and food chains — were being left behind simply because building
+                a proper website or digital menu felt expensive and complicated.
               </p>
               <p>
-                So we built Menuvora — a unified AI Business OS that brings
-                every tool a modern business needs into one affordable,
-                easy-to-use platform. Built specifically for the Indian market,
-                but designed to work globally.
+                So we built Menuvora AI: a team focused on restaurant website
+                development, smart QR code menus, and custom digital solutions.
+                Every project is built around the restaurant's branding,
+                workflow, and customer experience goals.
               </p>
               <p>
-                Today, Menuvora powers over 10,000 businesses across 18
-                countries. Our mission is simple: make the power of AI
-                accessible to every entrepreneur, creator, and business owner
-                on the planet.
+                Today we've delivered customized digital solutions for
+                restaurants including Shree Ram Dhaba, HR26 Dhaba, and Kake Da
+                Hotel, Delhi — helping them serve customers better and grow
+                their business online.
               </p>
             </div>
           </motion.div>
@@ -152,10 +150,9 @@ export default function AboutPage() {
                 Our Mission
               </h3>
               <p className="text-[#8888aa] leading-relaxed">
-                To make AI accessible, affordable, and actionable for every
-                business — from a solo creator to a 100-person agency. We
-                believe AI should be a superpower for everyone, not just the
-                elite.
+                To make professional websites and digital menus accessible and
+                affordable for every restaurant — from a small café to an
+                established food chain — so they can compete and grow online.
               </p>
             </div>
           </motion.div>
@@ -173,10 +170,9 @@ export default function AboutPage() {
                 Our Vision
               </h3>
               <p className="text-[#8888aa] leading-relaxed">
-                A world where every business, regardless of size or location, can
-                compete at the highest level using AI. We're building toward
-                a future where the next unicorn could come from a tier-3 city in
-                India.
+                A world where every restaurant — regardless of size or location —
+                has a modern digital presence: a fast website, an easy QR menu,
+                and the tools to serve customers better every single day.
               </p>
             </div>
           </motion.div>
@@ -227,10 +223,10 @@ export default function AboutPage() {
           <div className="orb orb-brand w-48 h-48 -top-10 -right-10 opacity-30" />
           <div className="relative">
             <h2 className="text-3xl font-heading font-bold text-white mb-3">
-              Be part of the AI revolution
+              Ready to digitize your restaurant?
             </h2>
             <p className="text-[#8888aa] mb-6">
-              Join 10,000+ businesses already using Menuvora.
+              Let's build your website and QR menu. Start from just ₹100.
             </p>
             <Link
               href="/checkout"
