@@ -217,10 +217,13 @@ export default function DashboardPage() {
     return dates;
   }, [transactions, graphDays, graphStatusFilter, graphModeFilter]);
 
-  const maxGraphAmount = useMemo(() => {
-    const max = Math.max(...graphData.map((d) => d.amount));
-    return max > 0 ? max : 1000;
+  const peakDailyRevenue = useMemo(() => {
+    return Math.max(0, ...graphData.map((d) => d.amount));
   }, [graphData]);
+
+  const maxGraphAmount = useMemo(() => {
+    return peakDailyRevenue > 0 ? peakDailyRevenue : 1000;
+  }, [peakDailyRevenue]);
 
   const totalGraphAmount = useMemo(() => {
     return graphData.reduce((sum, d) => sum + d.amount, 0);
@@ -519,7 +522,7 @@ export default function DashboardPage() {
                   <div className="p-4 rounded-2xl glass-light border border-purple-500/20 flex items-center justify-between">
                     <div>
                       <span className="text-[11px] font-mono text-[#8888aa] block">Peak Daily Revenue</span>
-                      <span className="text-xl font-extrabold text-emerald-400">₹ {maxGraphAmount.toLocaleString("en-IN")}</span>
+                      <span className="text-xl font-extrabold text-emerald-400">₹ {peakDailyRevenue.toLocaleString("en-IN")}</span>
                     </div>
                     <TrendingUp className="w-6 h-6 text-emerald-400/50" />
                   </div>
