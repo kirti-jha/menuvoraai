@@ -70,7 +70,9 @@ export default function DashboardPage() {
   // Filter States for Analytics Graph
   const [graphStatusFilter, setGraphStatusFilter] = useState<string>("ALL");
   const [graphModeFilter, setGraphModeFilter] = useState<string>("ALL");
-  const [graphDays, setGraphDays] = useState<number>(7);
+  const [graphDateMode, setGraphDateMode] = useState<"7" | "14" | "30" | "CUSTOM">("7");
+  const [graphCustomStart, setGraphCustomStart] = useState<string>("2026-08-10");
+  const [graphCustomEnd, setGraphCustomEnd] = useState<string>("2026-08-17");
 
   // Live POS Transactions Polling (Every 10 Seconds)
   useEffect(() => {
@@ -191,31 +193,61 @@ export default function DashboardPage() {
   // Date-wise Aggregation for Graph
   const graphData = useMemo(() => {
     const dates: { dateStr: string; label: string; amount: number; count: number }[] = [];
-    const today = new Date();
 
-    for (let i = graphDays - 1; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().substring(0, 10);
-      const label = d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    if (graphDateMode === "CUSTOM") {
+      const start = new Date(graphCustomStart);
+      const end = new Date(graphCustomEnd);
 
-      const dayTxns = transactions.filter((t) => {
-        const matchesDate = t.date === dateStr || t.timestamp.startsWith(dateStr);
-        const matchesStatus = graphStatusFilter === "ALL" || t.status === graphStatusFilter;
-        const matchesMode =
-          graphModeFilter === "ALL" ||
-          (graphModeFilter === "UPI" && t.paymentMode === "UPI") ||
-          (graphModeFilter === "CARD" && (t.paymentMode === "CARD" || t.paymentMode.includes("POS")));
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && start <= end) {
+        const curr = new Date(start);
+        while (curr <= end) {
+          const dateStr = curr.toISOString().substring(0, 10);
+          const label = curr.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 
-        return matchesDate && matchesStatus && matchesMode;
-      });
+          const dayTxns = transactions.filter((t) => {
+            const matchesDate = t.date === dateStr || t.timestamp.startsWith(dateStr);
+            const matchesStatus = graphStatusFilter === "ALL" || t.status === graphStatusFilter;
+            const matchesMode =
+              graphModeFilter === "ALL" ||
+              (graphModeFilter === "UPI" && t.paymentMode === "UPI") ||
+              (graphModeFilter === "CARD" && (t.paymentMode === "CARD" || t.paymentMode.includes("POS")));
 
-      const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
-      dates.push({ dateStr, label, amount, count: dayTxns.length });
+            return matchesDate && matchesStatus && matchesMode;
+          });
+
+          const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
+          dates.push({ dateStr, label, amount, count: dayTxns.length });
+          curr.setDate(curr.getDate() + 1);
+        }
+      }
+    } else {
+      const days = parseInt(graphDateMode) || 7;
+      const today = new Date();
+
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().substring(0, 10);
+        const label = d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+
+        const dayTxns = transactions.filter((t) => {
+          const matchesDate = t.date === dateStr || t.timestamp.startsWith(dateStr);
+          const matchesStatus = graphStatusFilter === "ALL" || t.status === graphStatusFilter;
+          const matchesMode =
+            graphModeFilter === "ALL" ||
+            (graphModeFilter === "UPI" && t.paymentMode === "UPI") ||
+            (graphModeFilter === "CARD" && (t.paymentMode === "CARD" || t.paymentMode.includes("POS")));
+
+          return matchesDate && matchesStatus && matchesMode;
+        });
+
+        const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
+        dates.push({ dateStr, label, amount, count: dayTxns.length });
+      }
     }
 
     return dates;
-  }, [transactions, graphDays, graphStatusFilter, graphModeFilter]);
+  }, [transactions, graphDateMode, graphCustomStart, graphCustomEnd, graphStatusFilter, graphModeFilter]);
 
   const peakDailyRevenue = useMemo(() => {
     return Math.max(0, ...graphData.map((d) => d.amount));
@@ -466,15 +498,16 @@ export default function DashboardPage() {
                     {/* Time Period Filter Pills */}
                     <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl text-xs font-mono">
                       {[
-                        { days: 7, label: "Last 7 Days" },
-                        { days: 14, label: "14 Days" },
-                        { days: 30, label: "30 Days" },
+                        { mode: "7", label: "Last 7 Days" },
+                        { mode: "14", label: "14 Days" },
+                        { mode: "30", label: "30 Days" },
+                        { mode: "CUSTOM", label: "Custom Range 📅" },
                       ].map((item) => (
                         <button
-                          key={item.days}
-                          onClick={() => setGraphDays(item.days)}
+                          key={item.mode}
+                          onClick={() => setGraphDateMode(item.mode as any)}
                           className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                            graphDays === item.days
+                            graphDateMode === item.mode
                               ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
                               : "text-[#8888aa] hover:text-white"
                           }`}
@@ -483,6 +516,30 @@ export default function DashboardPage() {
                         </button>
                       ))}
                     </div>
+
+                    {/* Custom Date Pickers (Shown when Custom Range is active) */}
+                    {graphDateMode === "CUSTOM" && (
+                      <div className="flex items-center gap-2 bg-indigo-950/40 p-1.5 rounded-xl border border-indigo-500/30">
+                        <div className="flex items-center gap-1 text-xs text-indigo-300 font-mono">
+                          <span className="text-[10px] text-[#8888aa]">From:</span>
+                          <input
+                            type="date"
+                            value={graphCustomStart}
+                            onChange={(e) => setGraphCustomStart(e.target.value)}
+                            className="bg-black/50 text-white px-2 py-1 rounded-lg border border-indigo-500/40 text-xs font-mono focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-indigo-300 font-mono">
+                          <span className="text-[10px] text-[#8888aa]">To:</span>
+                          <input
+                            type="date"
+                            value={graphCustomEnd}
+                            onChange={(e) => setGraphCustomEnd(e.target.value)}
+                            className="bg-black/50 text-white px-2 py-1 rounded-lg border border-indigo-500/40 text-xs font-mono focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Status Filter */}
                     <select
