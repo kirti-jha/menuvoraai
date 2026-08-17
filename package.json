@@ -1,20 +1,17 @@
 {
-  "name": "menuvora-monorepo",
+  "name": "menuvora-frontend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build:backend": "cd backend && npm run build",
-    "build:frontend": "cd frontend && npm run build",
-    "build": "npm run build:backend && npm run build:frontend"
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run start"
   },
   "keywords": [
     "menuvora",
-    "mern",
-    "neon-db",
-    "express",
-    "nextjs"
+    "nextjs",
+    "react",
+    "frontend"
   ],
   "author": "Menuvora AI",
   "license": "ISC"
