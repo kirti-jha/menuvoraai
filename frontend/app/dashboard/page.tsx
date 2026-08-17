@@ -39,6 +39,7 @@ import {
   INITIAL_TRANSACTIONS, 
   TransactionRecord, 
   exportTransactionsCSV,
+  fetchAllPosTransactions,
   API_BASE_URL 
 } from "@/lib/api";
 
@@ -64,6 +65,25 @@ export default function DashboardPage() {
   const [reportEndDate, setReportEndDate] = useState("2026-08-17");
   const [reportStatusFilter, setReportStatusFilter] = useState<string>("ALL");
   const [reportModeFilter, setReportModeFilter] = useState<string>("ALL");
+
+  // Live POS Transactions Polling (Every 10 Seconds)
+  useEffect(() => {
+    const loadLiveTransactions = async () => {
+      const liveData = await fetchAllPosTransactions();
+      if (liveData && liveData.length > 0) {
+        setTransactions((prev) => {
+          // Merge live transactions ensuring no duplicates
+          const existingIds = new Set(prev.map((t) => t.id));
+          const newEntries = liveData.filter((t) => !existingIds.has(t.id));
+          return newEntries.length > 0 ? [...newEntries, ...prev] : prev;
+        });
+      }
+    };
+
+    loadLiveTransactions();
+    const interval = setInterval(loadLiveTransactions, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {

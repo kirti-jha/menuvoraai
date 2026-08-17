@@ -302,3 +302,78 @@ export const cancelPosPayment = async (
     throw error;
   }
 };
+
+/**
+ * Fetch All Live POS Transactions (For Admin Dashboard / Order History)
+ */
+export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payments/pos/transactions`);
+    const result = await response.json();
+    if (result.success && Array.isArray(result.data)) {
+      return result.data.map((item: any) => ({
+        id: item.transactionId || item.id || `TXN-${Date.now()}`,
+        orderRef: item.externalRefNumber || item.orderRef || "ORD-LIVE",
+        customerName: item.customerName || item.customerEmail?.split("@")[0] || "POS Customer",
+        customerEmail: item.customerEmail || "customer@menuvora.ai",
+        customerPhone: item.customerMobileNumber || item.customerPhone || "",
+        amount: item.amount || 0,
+        paymentMode: item.paymentMode || "RAZORPAY_POS",
+        status: item.status || "SUCCESS",
+        deviceId: item.deviceId || "5B006033",
+        timestamp: item.timestamp || new Date().toISOString().replace("T", " ").substring(0, 19),
+        date: item.date || new Date().toISOString().substring(0, 10),
+      }));
+    }
+    return [];
+  } catch (error) {
+    console.error("Failed to fetch live transactions:", error);
+    return [];
+  }
+};
+
+/**
+ * Check Single Transaction Status (For Polling after initiating payment)
+ */
+export const checkTransactionStatus = async (transactionId: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payments/${transactionId}/status`);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to check status:", error);
+    return { success: false, status: "ERROR" };
+  }
+};
+
+/**
+ * Helper to Poll Status until Payment Completes or Times Out
+ */
+export const pollPaymentStatus = (
+  transactionId: string,
+  onStatusChange?: (statusData: any) => void,
+  intervalMs = 3000,
+  maxAttempts = 20
+) => {
+  let attempts = 0;
+  const timer = setInterval(async () => {
+    attempts++;
+    const statusData = await checkTransactionStatus(transactionId);
+
+    if (onStatusChange) {
+      onStatusChange(statusData);
+    }
+
+    if (
+      statusData.status === "SUCCESS" ||
+      statusData.status === "FAILED" ||
+      statusData.status === "CANCELLED" ||
+      attempts >= maxAttempts
+    ) {
+      clearInterval(timer);
+    }
+  }, intervalMs);
+
+  return () => clearInterval(timer);
+};
+
