@@ -67,6 +67,11 @@ export default function DashboardPage() {
   const [reportStatusFilter, setReportStatusFilter] = useState<string>("ALL");
   const [reportModeFilter, setReportModeFilter] = useState<string>("ALL");
 
+  // Filter States for Analytics Graph
+  const [graphStatusFilter, setGraphStatusFilter] = useState<string>("ALL");
+  const [graphModeFilter, setGraphModeFilter] = useState<string>("ALL");
+  const [graphDays, setGraphDays] = useState<number>(7);
+
   // Live POS Transactions Polling (Every 10 Seconds)
   useEffect(() => {
     const loadLiveTransactions = async () => {
@@ -182,6 +187,48 @@ export default function DashboardPage() {
   const refundAmount = useMemo(() => {
     return refundTxns.reduce((sum, t) => sum + t.amount, 0);
   }, [refundTxns]);
+
+  // Date-wise Aggregation for Graph
+  const graphData = useMemo(() => {
+    const dates: { dateStr: string; label: string; amount: number; count: number }[] = [];
+    const today = new Date();
+
+    for (let i = graphDays - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().substring(0, 10);
+      const label = d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+
+      const dayTxns = transactions.filter((t) => {
+        const matchesDate = t.date === dateStr || t.timestamp.startsWith(dateStr);
+        const matchesStatus = graphStatusFilter === "ALL" || t.status === graphStatusFilter;
+        const matchesMode =
+          graphModeFilter === "ALL" ||
+          (graphModeFilter === "UPI" && t.paymentMode === "UPI") ||
+          (graphModeFilter === "CARD" && (t.paymentMode === "CARD" || t.paymentMode.includes("POS")));
+
+        return matchesDate && matchesStatus && matchesMode;
+      });
+
+      const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
+      dates.push({ dateStr, label, amount, count: dayTxns.length });
+    }
+
+    return dates;
+  }, [transactions, graphDays, graphStatusFilter, graphModeFilter]);
+
+  const maxGraphAmount = useMemo(() => {
+    const max = Math.max(...graphData.map((d) => d.amount));
+    return max > 0 ? max : 1000;
+  }, [graphData]);
+
+  const totalGraphAmount = useMemo(() => {
+    return graphData.reduce((sum, d) => sum + d.amount, 0);
+  }, [graphData]);
+
+  const avgGraphAmount = useMemo(() => {
+    return Math.round(totalGraphAmount / (graphData.length || 1));
+  }, [totalGraphAmount, graphData]);
 
   // Report Metrics
   const reportTotalRevenue = useMemo(() => {
@@ -456,6 +503,147 @@ export default function DashboardPage() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+
+              {/* Date-Wise Transaction Revenue & Volume Analytics Graph Card */}
+              <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] p-6 space-y-6 relative overflow-hidden">
+                {/* Header & Interactive Filter Bar */}
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[rgba(99,102,241,0.15)] pb-5">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-indigo-400" />
+                      <h2 className="text-lg font-bold text-white tracking-tight">Date-Wise Transaction Analytics Graph</h2>
+                    </div>
+                    <p className="text-xs text-[#8888aa] mt-0.5">
+                      Visual daily revenue breakdown & transaction volume with interactive filtering
+                    </p>
+                  </div>
+
+                  {/* Filter Controls for Graph */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {/* Time Period Filter Pills */}
+                    <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl text-xs font-mono">
+                      {[
+                        { days: 7, label: "Last 7 Days" },
+                        { days: 14, label: "14 Days" },
+                        { days: 30, label: "30 Days" },
+                      ].map((item) => (
+                        <button
+                          key={item.days}
+                          onClick={() => setGraphDays(item.days)}
+                          className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                            graphDays === item.days
+                              ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                              : "text-[#8888aa] hover:text-white"
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Status Filter */}
+                    <select
+                      value={graphStatusFilter}
+                      onChange={(e) => setGraphStatusFilter(e.target.value)}
+                      className="px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white text-xs font-mono focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="ALL" className="bg-[#0f0f20]">All Statuses</option>
+                      <option value="SUCCESS" className="bg-[#0f0f20]">Success Only</option>
+                      <option value="PENDING" className="bg-[#0f0f20]">Pending Only</option>
+                      <option value="FAILED" className="bg-[#0f0f20]">Failed / Cancelled</option>
+                    </select>
+
+                    {/* Payment Mode Filter */}
+                    <select
+                      value={graphModeFilter}
+                      onChange={(e) => setGraphModeFilter(e.target.value)}
+                      className="px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white text-xs font-mono focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="ALL" className="bg-[#0f0f20]">All Modes</option>
+                      <option value="UPI" className="bg-[#0f0f20]">UPI Only</option>
+                      <option value="CARD" className="bg-[#0f0f20]">Card / POS Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Graph Summary Metrics Bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-2xl glass-light border border-indigo-500/20 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-mono text-[#8888aa] block">Period Total Revenue</span>
+                      <span className="text-xl font-extrabold text-white">₹ {totalGraphAmount.toLocaleString("en-IN")}</span>
+                    </div>
+                    <IndianRupee className="w-6 h-6 text-indigo-400/50" />
+                  </div>
+
+                  <div className="p-4 rounded-2xl glass-light border border-purple-500/20 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-mono text-[#8888aa] block">Peak Daily Revenue</span>
+                      <span className="text-xl font-extrabold text-emerald-400">₹ {maxGraphAmount.toLocaleString("en-IN")}</span>
+                    </div>
+                    <TrendingUp className="w-6 h-6 text-emerald-400/50" />
+                  </div>
+
+                  <div className="p-4 rounded-2xl glass-light border border-blue-500/20 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-mono text-[#8888aa] block">Avg Daily Revenue</span>
+                      <span className="text-xl font-extrabold text-blue-300">₹ {avgGraphAmount.toLocaleString("en-IN")}</span>
+                    </div>
+                    <Receipt className="w-6 h-6 text-blue-400/50" />
+                  </div>
+                </div>
+
+                {/* Visual Bar Chart Display */}
+                <div className="space-y-2">
+                  <div className="h-56 w-full pt-6 flex items-end justify-between gap-2 sm:gap-4 relative px-2">
+                    {/* Background Grid Lines */}
+                    <div className="absolute inset-x-0 bottom-0 top-0 flex flex-col justify-between pointer-events-none opacity-15">
+                      <div className="border-b border-indigo-400 w-full" />
+                      <div className="border-b border-indigo-400 w-full" />
+                      <div className="border-b border-indigo-400 w-full" />
+                      <div className="border-b border-indigo-400 w-full" />
+                    </div>
+
+                    {/* Dynamic Bar Columns */}
+                    {graphData.map((item, idx) => {
+                      const barHeightPercent = maxGraphAmount > 0 ? Math.max(8, (item.amount / maxGraphAmount) * 100) : 8;
+                      return (
+                        <div
+                          key={item.dateStr || idx}
+                          className="flex-1 flex flex-col items-center h-full justify-end group relative z-10"
+                        >
+                          {/* Hover Tooltip */}
+                          <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none bg-slate-900/95 border border-indigo-500/40 text-white p-2 rounded-xl text-xs font-mono text-center shadow-xl z-30 whitespace-nowrap">
+                            <div className="font-bold text-indigo-300">{item.label}</div>
+                            <div className="text-emerald-400 font-extrabold">₹ {item.amount.toLocaleString("en-IN")}</div>
+                            <div className="text-[10px] text-slate-400">{item.count} transactions</div>
+                          </div>
+
+                          {/* Bar Amount Value Tag */}
+                          <span className="text-[10px] font-mono text-indigo-300 mb-1.5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all font-bold">
+                            {item.amount > 0 ? `₹${item.amount >= 1000 ? `${(item.amount / 1000).toFixed(1)}k` : item.amount}` : "₹0"}
+                          </span>
+
+                          {/* Bar Element */}
+                          <div
+                            style={{ height: `${barHeightPercent}%` }}
+                            className={`w-full max-w-[48px] rounded-t-xl transition-all duration-500 shadow-lg ${
+                              item.amount > 0
+                                ? "bg-gradient-to-t from-indigo-600 via-purple-600 to-indigo-400 group-hover:from-indigo-500 group-hover:to-pink-500 shadow-indigo-500/30"
+                                : "bg-white/[0.04] border border-white/[0.08]"
+                            }`}
+                          />
+
+                          {/* Date Label */}
+                          <span className="text-[11px] font-mono text-[#8888aa] mt-2 group-hover:text-white transition-colors truncate">
+                            {item.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </motion.div>
