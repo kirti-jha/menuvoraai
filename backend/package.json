@@ -2,11 +2,11 @@
   "name": "menuvora-backend",
   "version": "1.0.0",
   "description": "Menuvora AI - Node.js Express MERN API with Neon Database (PostgreSQL)",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/src/server.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -21,6 +21,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.7",
+    "@vercel/node": "^3.0.23",
     "tsx": "^4.23.12",
     "typescript": "^5.4.5"
   }
