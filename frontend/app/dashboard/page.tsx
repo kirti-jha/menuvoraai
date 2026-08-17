@@ -18,6 +18,7 @@ import {
   TrendingUp, 
   IndianRupee, 
   RefreshCw, 
+  RotateCcw,
   Calendar, 
   ChevronRight, 
   Eye, 
@@ -171,6 +172,16 @@ export default function DashboardPage() {
   const cardRevenue = useMemo(() => {
     return cardTxns.reduce((sum, t) => sum + t.amount, 0);
   }, [cardTxns]);
+
+  const refundTxns = useMemo(() => {
+    return transactions.filter(
+      (t) => t.status === "CANCELLED" || t.status === "FAILED"
+    );
+  }, [transactions]);
+
+  const refundAmount = useMemo(() => {
+    return refundTxns.reduce((sum, t) => sum + t.amount, 0);
+  }, [refundTxns]);
 
   // Report Metrics
   const reportTotalRevenue = useMemo(() => {
@@ -374,14 +385,14 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="glass-light p-6 rounded-3xl border border-emerald-500/20 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Smartphone className="w-6 h-6" />
+                <div className="glass-light p-6 rounded-3xl border border-amber-500/20 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                    <RotateCcw className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-xs text-[#8888aa] font-mono block">POS Soundbox</span>
-                    <span className="text-xl font-bold text-white">Device 5B006033</span>
-                    <span className="text-[11px] text-emerald-400 block font-mono">Active & Listening</span>
+                    <span className="text-xs text-[#8888aa] font-mono block">Refunds & Cancellations</span>
+                    <span className="text-xl font-bold text-white">₹ {refundAmount.toLocaleString("en-IN")}</span>
+                    <span className="text-[11px] text-amber-400 block font-mono">{refundTxns.length} processed refunds</span>
                   </div>
                 </div>
               </div>
