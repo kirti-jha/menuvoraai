@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -9,7 +9,7 @@ import { useStore } from "@/lib/store";
 
 export default function SignInPage() {
   const router = useRouter();
-  const loginUser = useStore((state) => state.loginUser);
+  const { isAuthenticated, loginUser } = useStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +17,12 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   const handleQuickFill = () => {
     setEmail("menuvoraai@gmail.com");

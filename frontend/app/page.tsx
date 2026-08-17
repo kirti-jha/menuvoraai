@@ -22,7 +22,20 @@ import {
   CLIENTS,
 } from "@/lib/data";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/lib/store";
+
 export default function HomePage() {
+  const router = useRouter();
+  const isAuthenticated = useStore((state) => state.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
   return (
     <div className="overflow-hidden">
       {/* HERO */}

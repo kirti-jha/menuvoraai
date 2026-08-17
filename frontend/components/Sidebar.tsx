@@ -57,7 +57,7 @@ export default function Sidebar({
       {/* Top Header Branding */}
       <div>
         <div className="p-6 border-b border-[rgba(99,102,241,0.15)] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
+          <button onClick={() => setActiveTab("dashboard")} className="flex items-center gap-3 group text-left">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-all">
               <Store className="w-5 h-5 text-white" />
             </div>
@@ -72,7 +72,7 @@ export default function Sidebar({
               </div>
               <p className="text-[11px] text-[#8888aa] font-mono">Merchant Portal v2.4</p>
             </div>
-          </Link>
+          </button>
         </div>
 
         {/* Navigation Items */}
