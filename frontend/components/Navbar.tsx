@@ -25,6 +25,10 @@ export function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/checkout/pos")) {
+    return null;
+  }
+
   return (
     <>
       <motion.header

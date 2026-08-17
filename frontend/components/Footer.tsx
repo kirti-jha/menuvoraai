@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Zap } from "lucide-react";
 
 const FOOTER_LINKS = {
@@ -19,6 +22,11 @@ const FOOTER_LINKS = {
 };
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/checkout/pos")) {
+    return null;
+  }
   return (
     <footer className="border-t border-[rgba(99,102,241,0.15)] bg-[#0a0a14]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
