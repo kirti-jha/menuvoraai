@@ -149,6 +149,29 @@ export default function DashboardPage() {
   const successRate = totalTxnCount > 0 ? Math.round((successfulTxns / totalTxnCount) * 100) : 0;
   const avgTransactionValue = successfulTxns > 0 ? Math.round(totalRevenue / successfulTxns) : 0;
 
+  // Payment Method Dynamic Metrics
+  const upiTxns = useMemo(() => {
+    return transactions.filter(
+      (t) => t.paymentMode === "UPI" && t.status === "SUCCESS"
+    );
+  }, [transactions]);
+
+  const upiRevenue = useMemo(() => {
+    return upiTxns.reduce((sum, t) => sum + t.amount, 0);
+  }, [upiTxns]);
+
+  const cardTxns = useMemo(() => {
+    return transactions.filter(
+      (t) =>
+        (t.paymentMode === "CARD" || t.paymentMode.includes("POS")) &&
+        t.status === "SUCCESS"
+    );
+  }, [transactions]);
+
+  const cardRevenue = useMemo(() => {
+    return cardTxns.reduce((sum, t) => sum + t.amount, 0);
+  }, [cardTxns]);
+
   // Report Metrics
   const reportTotalRevenue = useMemo(() => {
     return reportFilteredRecords
@@ -335,8 +358,8 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">UPI Payments</span>
-                    <span className="text-xl font-bold text-white">₹ 5,830.00</span>
-                    <span className="text-[11px] text-indigo-400 block font-mono">5 successful payments</span>
+                    <span className="text-xl font-bold text-white">₹ {upiRevenue.toLocaleString("en-IN")}</span>
+                    <span className="text-[11px] text-indigo-400 block font-mono">{upiTxns.length} successful payments</span>
                   </div>
                 </div>
 
@@ -346,8 +369,8 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">Card / Razorpay POS</span>
-                    <span className="text-xl font-bold text-white">₹ 10,400.00</span>
-                    <span className="text-[11px] text-purple-400 block font-mono">3 POS terminal charges</span>
+                    <span className="text-xl font-bold text-white">₹ {cardRevenue.toLocaleString("en-IN")}</span>
+                    <span className="text-[11px] text-purple-400 block font-mono">{cardTxns.length} POS terminal charges</span>
                   </div>
                 </div>
 
