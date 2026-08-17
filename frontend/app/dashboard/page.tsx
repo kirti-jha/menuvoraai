@@ -16,7 +16,7 @@ import {
   Clock, 
   AlertCircle, 
   TrendingUp, 
-  DollarSign, 
+  IndianRupee, 
   RefreshCw, 
   Calendar, 
   ChevronRight, 
@@ -236,7 +236,7 @@ export default function DashboardPage() {
                       Total Sales Revenue
                     </span>
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                      <DollarSign className="w-5 h-5" />
+                      <IndianRupee className="w-5 h-5" />
                     </div>
                   </div>
                   <div className="text-3xl font-heading font-extrabold text-white tracking-tight">
@@ -625,7 +625,7 @@ export default function DashboardPage() {
                     <span className="text-xs text-[#8888aa] font-mono block">Filtered Range Revenue</span>
                     <span className="text-2xl font-extrabold text-emerald-400">₹ {reportTotalRevenue.toLocaleString("en-IN")}</span>
                   </div>
-                  <DollarSign className="w-8 h-8 text-emerald-400/40" />
+                  <IndianRupee className="w-7 h-7 text-emerald-400/50" />
                 </div>
 
                 <div className="glass p-5 rounded-2xl border border-purple-500/20 flex items-center justify-between">
