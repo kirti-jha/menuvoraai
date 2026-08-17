@@ -444,68 +444,6 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Recent Transactions Preview Section */}
-              <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] p-6 space-y-5">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <h2 className="text-lg font-bold text-white tracking-tight">Recent Transactions Overview</h2>
-                    <p className="text-xs text-[#8888aa]">Latest customer payments across all gateways</p>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab("transactions")}
-                    className="px-4 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
-                  >
-                    View All Transactions <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Table Preview */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-slate-300">
-                    <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.03] border-y border-white/[0.08]">
-                      <tr>
-                        <th className="py-3.5 px-4">Txn ID</th>
-                        <th className="py-3.5 px-4">Customer</th>
-                        <th className="py-3.5 px-4">Amount</th>
-                        <th className="py-3.5 px-4">Mode</th>
-                        <th className="py-3.5 px-4">Status</th>
-                        <th className="py-3.5 px-4">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/[0.06]">
-                      {transactions.slice(0, 5).map((t) => (
-                        <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-4 px-4 font-mono font-bold text-indigo-300">{t.id}</td>
-                          <td className="py-4 px-4">
-                            <div className="font-semibold text-slate-200">{t.customerName}</div>
-                            <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
-                          </td>
-                          <td className="py-4 px-4 font-extrabold text-white">₹ {t.amount.toLocaleString("en-IN")}</td>
-                          <td className="py-4 px-4 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                          <td className="py-4 px-4">
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
-                                t.status === "SUCCESS"
-                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                  : t.status === "PENDING"
-                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                                  : "bg-red-500/10 text-red-400 border-red-500/30"
-                              }`}
-                            >
-                              {t.status === "SUCCESS" && <CheckCircle2 className="w-3.5 h-3.5" />}
-                              {t.status === "PENDING" && <Clock className="w-3.5 h-3.5" />}
-                              {t.status !== "SUCCESS" && t.status !== "PENDING" && <XCircle className="w-3.5 h-3.5" />}
-                              {t.status}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 text-xs text-[#8888aa] font-mono">{t.timestamp}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
               {/* Date-Wise Transaction Revenue & Volume Analytics Graph Card */}
               <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] p-6 space-y-6 relative overflow-hidden">
                 {/* Header & Interactive Filter Bar */}
@@ -644,6 +582,68 @@ export default function DashboardPage() {
                       );
                     })}
                   </div>
+                </div>
+              </div>
+
+              {/* Recent Transactions Preview Section */}
+              <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] p-6 space-y-5">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h2 className="text-lg font-bold text-white tracking-tight">Recent Transactions Overview</h2>
+                    <p className="text-xs text-[#8888aa]">Latest customer payments across all gateways</p>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab("transactions")}
+                    className="px-4 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  >
+                    View All Transactions <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Table Preview */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm text-slate-300">
+                    <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.03] border-y border-white/[0.08]">
+                      <tr>
+                        <th className="py-3.5 px-4">Txn ID</th>
+                        <th className="py-3.5 px-4">Customer</th>
+                        <th className="py-3.5 px-4">Amount</th>
+                        <th className="py-3.5 px-4">Mode</th>
+                        <th className="py-3.5 px-4">Status</th>
+                        <th className="py-3.5 px-4">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.06]">
+                      {transactions.slice(0, 5).map((t) => (
+                        <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-4 px-4 font-mono font-bold text-indigo-300">{t.id}</td>
+                          <td className="py-4 px-4">
+                            <div className="font-semibold text-slate-200">{t.customerName}</div>
+                            <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
+                          </td>
+                          <td className="py-4 px-4 font-extrabold text-white">₹ {t.amount.toLocaleString("en-IN")}</td>
+                          <td className="py-4 px-4 text-xs font-mono text-slate-300">{t.paymentMode}</td>
+                          <td className="py-4 px-4">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
+                                t.status === "SUCCESS"
+                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                  : t.status === "PENDING"
+                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                  : "bg-red-500/10 text-red-400 border-red-500/30"
+                              }`}
+                            >
+                              {t.status === "SUCCESS" && <CheckCircle2 className="w-3.5 h-3.5" />}
+                              {t.status === "PENDING" && <Clock className="w-3.5 h-3.5" />}
+                              {t.status !== "SUCCESS" && t.status !== "PENDING" && <XCircle className="w-3.5 h-3.5" />}
+                              {t.status}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 text-xs text-[#8888aa] font-mono">{t.timestamp}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </motion.div>
