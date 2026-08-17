@@ -4,6 +4,12 @@ import { persist } from "zustand/middleware";
 export type PlanId = "basic" | "pro" | "business";
 export type BillingPeriod = "monthly" | "quarterly" | "halfyearly" | "yearly";
 
+export interface User {
+  name: string;
+  email: string;
+  role?: string;
+}
+
 interface CheckoutState {
   selectedPlan: PlanId | null;
   billingPeriod: BillingPeriod;
@@ -18,11 +24,17 @@ interface CheckoutState {
   // Step
   checkoutStep: number;
 
+  // User Auth State
+  user: User | null;
+  isAuthenticated: boolean;
+
   // Actions
   selectPlan: (plan: PlanId, amount: number, name: string) => void;
   setBillingPeriod: (period: BillingPeriod) => void;
   setUserDetails: (name: string, email: string, phone: string) => void;
   setCheckoutStep: (step: number) => void;
+  loginUser: (user: User) => void;
+  logoutUser: () => void;
   reset: () => void;
 }
 
@@ -38,6 +50,9 @@ export const useStore = create<CheckoutState>()(
       phone: "",
       checkoutStep: 1,
 
+      user: null,
+      isAuthenticated: false,
+
       selectPlan: (plan, amount, name) =>
         set({ selectedPlan: plan, planAmount: amount, planName: name }),
 
@@ -47,6 +62,20 @@ export const useStore = create<CheckoutState>()(
         set({ name, email, phone }),
 
       setCheckoutStep: (step) => set({ checkoutStep: step }),
+
+      loginUser: (user) =>
+        set({
+          user,
+          isAuthenticated: true,
+          email: user.email,
+          name: user.name,
+        }),
+
+      logoutUser: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+        }),
 
       reset: () =>
         set({
@@ -61,7 +90,7 @@ export const useStore = create<CheckoutState>()(
         }),
     }),
     {
-      name: "menuvora-checkout",
+      name: "menuvora-store",
     }
   )
 );

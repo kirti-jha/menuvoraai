@@ -2,16 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, User, LogOut, LayoutDashboard } from "lucide-react";
 import { NAV_LINKS } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/lib/store";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { user, isAuthenticated, logoutUser } = useStore();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -64,20 +68,45 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* CTA */}
+            {/* CTA / Auth State */}
             <div className="hidden md:flex items-center gap-3">
-              <Link
-                href="/checkout"
-                className="px-4 py-2 text-sm font-medium text-[#8888aa] hover:text-white transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/checkout"
-                className="btn-shimmer px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-shadow"
-              >
-                Start for ₹100
-              </Link>
+              {isAuthenticated && user ? (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/dashboard"
+                    className="px-3.5 py-1.5 rounded-xl glass-light border border-indigo-500/30 text-xs text-indigo-300 hover:text-white font-medium flex items-center gap-2 transition-all"
+                  >
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      logoutUser();
+                      router.push("/signin");
+                    }}
+                    className="p-2 rounded-xl glass-light border border-red-500/20 text-red-400 hover:bg-red-500/10 text-xs transition-colors"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/signin"
+                    className="px-4 py-2 text-sm font-medium text-[#8888aa] hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/checkout"
+                    className="btn-shimmer px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-shadow"
+                  >
+                    Start for ₹100
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile menu toggle */}
@@ -117,13 +146,42 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+
               <div className="mt-4 flex flex-col gap-3">
-                <Link
-                  href="/checkout"
-                  className="btn-shimmer text-center py-4 rounded-xl text-base font-semibold text-white"
-                >
-                  Start for ₹100
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="btn-shimmer text-center py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2"
+                    >
+                      <LayoutDashboard className="w-5 h-5" /> Go to Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logoutUser();
+                        router.push("/signin");
+                      }}
+                      className="py-3 rounded-xl glass-light border border-red-500/30 text-red-400 text-sm font-semibold flex items-center justify-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/signin"
+                      className="text-center py-3 rounded-xl glass-light text-white text-base font-semibold"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/checkout"
+                      className="btn-shimmer text-center py-4 rounded-xl text-base font-semibold text-white"
+                    >
+                      Start for ₹100
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
