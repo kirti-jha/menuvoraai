@@ -91,10 +91,6 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, router]);
 
-  if (!isAuthenticated || !user) {
-    return null;
-  }
-
   // Handle Copy Txn ID
   const handleCopyTxnId = (id: string) => {
     navigator.clipboard.writeText(id);
@@ -161,6 +157,10 @@ export default function DashboardPage() {
   }, [reportFilteredRecords]);
 
   const reportSuccessCount = reportFilteredRecords.filter((t) => t.status === "SUCCESS").length;
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#070711] text-slate-100 font-sans flex flex-col md:flex-row antialiased selection:bg-indigo-500 selection:text-white">

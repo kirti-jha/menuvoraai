@@ -309,6 +309,9 @@ export const cancelPosPayment = async (
 export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/payments/pos/transactions`);
+    if (!response.ok) {
+      return [];
+    }
     const result = await response.json();
     if (result.success && Array.isArray(result.data)) {
       return result.data.map((item: any) => ({
@@ -338,6 +341,9 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
 export const checkTransactionStatus = async (transactionId: string) => {
   try {
     const response = await fetch(`${API_BASE_URL}/payments/${transactionId}/status`);
+    if (!response.ok) {
+      return { success: false, status: "NOT_FOUND" };
+    }
     const result = await response.json();
     return result;
   } catch (error) {
