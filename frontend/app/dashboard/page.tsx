@@ -929,17 +929,17 @@ const getPastDateString = (daysAgo: number) => {
               {/* Transactions Data Table */}
               <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-slate-300">
+                  <table className="min-w-[960px] w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.04] border-b border-white/[0.08]">
                       <tr>
-                        <th className="py-4 px-5">Reference ID</th>
-                        <th className="py-4 px-5">Customer Info</th>
-                        <th className="py-4 px-5">Payment Mode</th>
-                        <th className="py-4 px-5">Amount</th>
-                        <th className="py-4 px-5">Status</th>
-                        <th className="py-4 px-5">Date</th>
-                        <th className="py-4 px-5">Time</th>
-                        <th className="py-4 px-5 text-right">Action</th>
+                        <th className="py-4 px-4">Reference ID</th>
+                        <th className="py-4 px-4">Customer Info</th>
+                        <th className="py-4 px-3">Payment Mode</th>
+                        <th className="py-4 px-3">Amount</th>
+                        <th className="py-4 px-3">Status</th>
+                        <th className="py-4 px-3">Date</th>
+                        <th className="py-4 px-3">Time</th>
+                        <th className="py-4 px-4 text-right min-w-[130px]">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -952,7 +952,7 @@ const getPastDateString = (daysAgo: number) => {
                       ) : (
                         filteredTransactions.map((t) => (
                           <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-4 px-5">
+                            <td className="py-4 px-4">
                               <button
                                 onClick={() => setSelectedTxn(t)}
                                 className="text-left group/id focus:outline-none"
@@ -968,13 +968,13 @@ const getPastDateString = (daysAgo: number) => {
                                 </div>
                               </button>
                             </td>
-                            <td className="py-4 px-5">
+                            <td className="py-4 px-4">
                               <div className="font-semibold text-slate-200">{t.customerName}</div>
                               <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
                             </td>
-                            <td className="py-4 px-5 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                            <td className="py-4 px-5 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
-                            <td className="py-4 px-5">
+                            <td className="py-4 px-3 text-xs font-mono text-slate-300">{t.paymentMode}</td>
+                            <td className="py-4 px-3 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
+                            <td className="py-4 px-3">
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
                                   isSuccessStatus(t.status)
@@ -995,9 +995,9 @@ const getPastDateString = (daysAgo: number) => {
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-4 px-5 text-xs text-[#8888aa] font-mono">{t.date}</td>
-                            <td className="py-4 px-5 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
-                            <td className="py-4 px-5 text-right">
+                            <td className="py-4 px-3 text-xs text-[#8888aa] font-mono">{t.date}</td>
+                            <td className="py-4 px-3 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
+                            <td className="py-4 px-4 text-right min-w-[130px]">
                               <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => setSelectedTxn(t)}
