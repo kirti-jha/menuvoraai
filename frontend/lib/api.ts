@@ -9,11 +9,43 @@ export interface TransactionRecord {
   customerPhone?: string;
   amount: number;
   paymentMode: string;
-  status: "SUCCESS" | "PENDING" | "FAILED" | "CANCELLED";
+  status: "SUCCESS" | "COMPLETED" | "PAID" | "PENDING" | "FAILED" | "CANCELLED" | string;
   deviceId?: string;
-  timestamp: string; // ISO String or YYYY-MM-DD HH:mm
-  date: string; // YYYY-MM-DD format for filtering
+  timestamp: string; // Raw ISO timestamp string
+  date: string; // YYYY-MM-DD format
+  time: string; // HH:mm:ss format
 }
+
+/**
+ * Format raw ISO timestamps cleanly into separate Date (YYYY-MM-DD) and Time (12h/24h) strings
+ */
+export const formatTxnDateTime = (rawTimeStr: any) => {
+  if (!rawTimeStr) {
+    const now = new Date();
+    return {
+      date: now.toISOString().substring(0, 10),
+      time: now.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+    };
+  }
+
+  try {
+    const d = new Date(rawTimeStr);
+    if (!isNaN(d.getTime())) {
+      const date = d.toISOString().substring(0, 10);
+      const time = d.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      return { date, time };
+    }
+  } catch (e) {
+    // Fallthrough
+  }
+
+  const str = String(rawTimeStr);
+  const parts = str.split(/T| /);
+  const date = parts[0] || str.substring(0, 10);
+  const rawTimePart = parts[1] || "";
+  const time = rawTimePart.replace("Z", "").substring(0, 8) || "00:00:00";
+  return { date, time };
+};
 
 // Default initial transaction records list (Empty array for pure live dataset)
 export const INITIAL_TRANSACTIONS: TransactionRecord[] = [];
@@ -35,7 +67,8 @@ export const exportTransactionsCSV = (transactions: TransactionRecord[], filenam
     "Payment Mode",
     "Status",
     "Device ID",
-    "Date & Time",
+    "Date",
+    "Time",
   ];
 
   const rows = transactions.map((t) => [
@@ -48,7 +81,8 @@ export const exportTransactionsCSV = (transactions: TransactionRecord[], filenam
     `"${t.paymentMode}"`,
     `"${t.status}"`,
     `"${t.deviceId || ""}"`,
-    `"${t.timestamp}"`,
+    `"${t.date}"`,
+    `"${t.time || ""}"`,
   ]);
 
   const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
@@ -185,6 +219,10 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
       const result = await resPos.json();
       if (result.success && Array.isArray(result.data)) {
         result.data.forEach((item: any) => {
+          const rawTime = item.timestamp || item.createdAt || new Date().toISOString();
+          const { date, time } = formatTxnDateTime(rawTime);
+          const normStatus = item.status ? String(item.status).trim().toUpperCase() : "SUCCESS";
+
           records.push({
             id: item.transactionId || item.id || `TXN-${Date.now()}`,
             orderRef: item.externalRefNumber || item.orderRef || "ORD-POS",
@@ -192,11 +230,12 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
             customerEmail: item.customerEmail || "customer@menuvora.ai",
             customerPhone: item.customerMobileNumber || item.customerPhone || "",
             amount: item.amount || 0,
-            paymentMode: item.paymentMode || "RAZORPAY_POS",
-            status: item.status || "SUCCESS",
-            deviceId: item.deviceId || "5B006033",
-            timestamp: item.timestamp || new Date().toISOString().replace("T", " ").substring(0, 19),
-            date: item.date || new Date().toISOString().substring(0, 10),
+            paymentMode: item.paymentMode || "CARD",
+            status: normStatus,
+            deviceId: item.deviceId || "EZETAP_POS_DEVICE_01",
+            timestamp: String(rawTime),
+            date: item.date || date,
+            time: item.time || time,
           });
         });
       }
@@ -212,6 +251,10 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
       const result = await resOrders.json();
       if (result.success && Array.isArray(result.data)) {
         result.data.forEach((item: any) => {
+          const rawTime = item.created_at || item.timestamp || new Date().toISOString();
+          const { date, time } = formatTxnDateTime(rawTime);
+          const normStatus = item.status ? String(item.status).trim().toUpperCase() : "COMPLETED";
+
           records.push({
             id: item.order_id || item.id || `ORD-${Date.now()}`,
             orderRef: item.order_id || item.plan_name || "WEB-ORDER",
@@ -220,10 +263,11 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
             customerPhone: item.customer_phone || "",
             amount: item.amount || 0,
             paymentMode: item.payment_mode || "ONLINE",
-            status: item.status || "COMPLETED",
+            status: normStatus,
             deviceId: item.device_id || "WEB",
-            timestamp: item.created_at || new Date().toISOString().replace("T", " ").substring(0, 19),
-            date: (item.created_at || new Date().toISOString()).substring(0, 10),
+            timestamp: String(rawTime),
+            date: date,
+            time: time,
           });
         });
       }

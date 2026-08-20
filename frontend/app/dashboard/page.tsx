@@ -44,6 +44,24 @@ import {
   API_BASE_URL 
 } from "@/lib/api";
 
+const isSuccessStatus = (status?: string): boolean => {
+  if (!status) return true;
+  const s = String(status).trim().toUpperCase();
+  return s === "SUCCESS" || s === "COMPLETED" || s === "PAID" || s === "AUTHORIZED" || s === "CAPTURED" || s === "OK";
+};
+
+const isPendingStatus = (status?: string): boolean => {
+  if (!status) return false;
+  const s = String(status).trim().toUpperCase();
+  return s === "PENDING" || s === "INITIATED" || s === "PROCESSING";
+};
+
+const isCancelledStatus = (status?: string): boolean => {
+  if (!status) return false;
+  const s = String(status).trim().toUpperCase();
+  return s === "CANCELLED" || s === "CANCELED";
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, logoutUser } = useStore();
@@ -74,28 +92,33 @@ export default function DashboardPage() {
   const [graphCustomStart, setGraphCustomStart] = useState<string>("2026-08-10");
   const [graphCustomEnd, setGraphCustomEnd] = useState<string>("2026-08-17");
 
-  // Live POS Transactions Polling (Every 10 Seconds)
+  // Live POS Transactions Auto-Refresh Polling (Every 5 Seconds)
   useEffect(() => {
     const loadLiveTransactions = async () => {
       const liveData = await fetchAllPosTransactions();
       if (liveData && liveData.length > 0) {
         setTransactions((prev) => {
-          // Merge live transactions ensuring no duplicates
-          const existingIds = new Set(prev.map((t) => t.id));
-          const newEntries = liveData.filter((t) => !existingIds.has(t.id));
-          return newEntries.length > 0 ? [...newEntries, ...prev] : prev;
+          // Map live items by ID for state status updates
+          const liveMap = new Map(liveData.map((t) => [t.id, t]));
+          const updatedPrev = prev.map((t) => liveMap.get(t.id) || t);
+
+          // Find brand new entries from backend polling
+          const prevIds = new Set(prev.map((t) => t.id));
+          const newEntries = liveData.filter((t) => !prevIds.has(t.id));
+
+          return [...newEntries, ...updatedPrev];
         });
       }
     };
 
     loadLiveTransactions();
-    const interval = setInterval(loadLiveTransactions, 10000);
+    const interval = setInterval(loadLiveTransactions, 5000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/signin");
+      router.push("/");
     }
   }, [isAuthenticated, router]);
 
@@ -116,7 +139,13 @@ export default function DashboardPage() {
         t.customerEmail.toLowerCase().includes(txnSearchQuery.toLowerCase()) ||
         (t.customerPhone && t.customerPhone.includes(txnSearchQuery));
 
-      const matchesStatus = txnStatusFilter === "ALL" || t.status === txnStatusFilter;
+      const matchesStatus =
+        txnStatusFilter === "ALL" ||
+        t.status === txnStatusFilter ||
+        (txnStatusFilter === "SUCCESS" && isSuccessStatus(t.status)) ||
+        (txnStatusFilter === "PENDING" && isPendingStatus(t.status)) ||
+        (txnStatusFilter === "CANCELLED" && isCancelledStatus(t.status));
+
       const matchesMode =
         txnModeFilter === "ALL" ||
         (txnModeFilter === "UPI" && t.paymentMode === "UPI") ||
@@ -132,7 +161,13 @@ export default function DashboardPage() {
       const txnDate = t.date;
       const matchesStartDate = !reportStartDate || txnDate >= reportStartDate;
       const matchesEndDate = !reportEndDate || txnDate <= reportEndDate;
-      const matchesStatus = reportStatusFilter === "ALL" || t.status === reportStatusFilter;
+      const matchesStatus =
+        reportStatusFilter === "ALL" ||
+        t.status === reportStatusFilter ||
+        (reportStatusFilter === "SUCCESS" && isSuccessStatus(t.status)) ||
+        (reportStatusFilter === "PENDING" && isPendingStatus(t.status)) ||
+        (reportStatusFilter === "CANCELLED" && isCancelledStatus(t.status));
+
       const matchesMode =
         reportModeFilter === "ALL" ||
         (reportModeFilter === "UPI" && t.paymentMode === "UPI") ||
@@ -145,12 +180,12 @@ export default function DashboardPage() {
   // Dashboard Aggregated Analytics
   const totalRevenue = useMemo(() => {
     return transactions
-      .filter((t) => t.status === "SUCCESS")
+      .filter((t) => isSuccessStatus(t.status))
       .reduce((sum, t) => sum + t.amount, 0);
   }, [transactions]);
 
   const successfulTxns = useMemo(() => {
-    return transactions.filter((t) => t.status === "SUCCESS").length;
+    return transactions.filter((t) => isSuccessStatus(t.status)).length;
   }, [transactions]);
 
   const totalTxnCount = transactions.length;
@@ -160,7 +195,7 @@ export default function DashboardPage() {
   // Payment Method Dynamic Metrics
   const upiTxns = useMemo(() => {
     return transactions.filter(
-      (t) => t.paymentMode === "UPI" && t.status === "SUCCESS"
+      (t) => t.paymentMode === "UPI" && isSuccessStatus(t.status)
     );
   }, [transactions]);
 
@@ -172,7 +207,7 @@ export default function DashboardPage() {
     return transactions.filter(
       (t) =>
         (t.paymentMode === "CARD" || t.paymentMode.includes("POS")) &&
-        t.status === "SUCCESS"
+        isSuccessStatus(t.status)
     );
   }, [transactions]);
 
@@ -182,7 +217,7 @@ export default function DashboardPage() {
 
   const refundTxns = useMemo(() => {
     return transactions.filter(
-      (t) => t.status === "CANCELLED" || t.status === "FAILED"
+      (t) => isCancelledStatus(t.status) || String(t.status).trim().toUpperCase() === "FAILED"
     );
   }, [transactions]);
 
@@ -268,11 +303,13 @@ export default function DashboardPage() {
   // Report Metrics
   const reportTotalRevenue = useMemo(() => {
     return reportFilteredRecords
-      .filter((t) => t.status === "SUCCESS")
+      .filter((t) => t.status === "SUCCESS" || t.status === "COMPLETED" || t.status === "PAID")
       .reduce((sum, t) => sum + t.amount, 0);
   }, [reportFilteredRecords]);
 
-  const reportSuccessCount = reportFilteredRecords.filter((t) => t.status === "SUCCESS").length;
+  const reportSuccessCount = reportFilteredRecords.filter(
+    (t) => t.status === "SUCCESS" || t.status === "COMPLETED" || t.status === "PAID"
+  ).length;
 
   if (!isAuthenticated || !user) {
     return null;
@@ -304,7 +341,7 @@ export default function DashboardPage() {
           userEmail={user.email}
           onSignOut={() => {
             logoutUser();
-            router.push("/signin");
+            router.push("/");
           }}
         />
       </div>
@@ -343,9 +380,20 @@ export default function DashboardPage() {
             </div>
 
             <button
-              onClick={() => setTransactions([...INITIAL_TRANSACTIONS])}
+              onClick={async () => {
+                const liveData = await fetchAllPosTransactions();
+                if (liveData && liveData.length > 0) {
+                  setTransactions((prev) => {
+                    const liveMap = new Map(liveData.map((t) => [t.id, t]));
+                    const updatedPrev = prev.map((t) => liveMap.get(t.id) || t);
+                    const prevIds = new Set(prev.map((t) => t.id));
+                    const newEntries = liveData.filter((t) => !prevIds.has(t.id));
+                    return [...newEntries, ...updatedPrev];
+                  });
+                }
+              }}
               className="p-2.5 rounded-xl glass-light border border-indigo-500/30 text-indigo-300 hover:text-white hover:bg-indigo-600/20 transition-all"
-              title="Refresh Data"
+              title="Refresh Live Data"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -671,6 +719,7 @@ export default function DashboardPage() {
                         <th className="py-3.5 px-4">Mode</th>
                         <th className="py-3.5 px-4">Status</th>
                         <th className="py-3.5 px-4">Date</th>
+                        <th className="py-3.5 px-4">Time</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -686,20 +735,26 @@ export default function DashboardPage() {
                           <td className="py-4 px-4">
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
-                                t.status === "SUCCESS"
+                                isSuccessStatus(t.status)
                                   ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                  : t.status === "PENDING"
+                                  : isPendingStatus(t.status)
                                   ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                  : isCancelledStatus(t.status)
+                                  ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
                                   : "bg-red-500/10 text-red-400 border-red-500/30"
                               }`}
                             >
-                              {t.status === "SUCCESS" && <CheckCircle2 className="w-3.5 h-3.5" />}
-                              {t.status === "PENDING" && <Clock className="w-3.5 h-3.5" />}
-                              {t.status !== "SUCCESS" && t.status !== "PENDING" && <XCircle className="w-3.5 h-3.5" />}
+                              {isSuccessStatus(t.status) && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                              {isPendingStatus(t.status) && <Clock className="w-3.5 h-3.5 text-amber-400" />}
+                              {isCancelledStatus(t.status) && <RotateCcw className="w-3.5 h-3.5 text-purple-400" />}
+                              {!isSuccessStatus(t.status) && !isPendingStatus(t.status) && !isCancelledStatus(t.status) && (
+                                <XCircle className="w-3.5 h-3.5 text-red-400" />
+                              )}
                               {t.status}
                             </span>
                           </td>
-                          <td className="py-4 px-4 text-xs text-[#8888aa] font-mono">{t.timestamp}</td>
+                          <td className="py-4 px-4 text-xs text-[#8888aa] font-mono">{t.date}</td>
+                          <td className="py-4 px-4 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -773,14 +828,15 @@ export default function DashboardPage() {
                         <th className="py-4 px-5">Payment Mode</th>
                         <th className="py-4 px-5">Amount</th>
                         <th className="py-4 px-5">Status</th>
-                        <th className="py-4 px-5">Date & Time</th>
+                        <th className="py-4 px-5">Date</th>
+                        <th className="py-4 px-5">Time</th>
                         <th className="py-4 px-5 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
                       {filteredTransactions.length === 0 ? (
                         <tr>
-                          <td colSpan={8} className="py-12 text-center text-[#8888aa]">
+                          <td colSpan={9} className="py-12 text-center text-[#8888aa]">
                             No transaction records found matching your filters.
                           </td>
                         </tr>
@@ -798,20 +854,26 @@ export default function DashboardPage() {
                             <td className="py-4 px-5">
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
-                                  t.status === "SUCCESS"
+                                  isSuccessStatus(t.status)
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                    : t.status === "PENDING"
+                                    : isPendingStatus(t.status)
                                     ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                    : isCancelledStatus(t.status)
+                                    ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
                                     : "bg-red-500/10 text-red-400 border-red-500/30"
                                 }`}
                               >
-                                {t.status === "SUCCESS" && <CheckCircle2 className="w-3.5 h-3.5" />}
-                                {t.status === "PENDING" && <Clock className="w-3.5 h-3.5" />}
-                                {t.status !== "SUCCESS" && t.status !== "PENDING" && <XCircle className="w-3.5 h-3.5" />}
+                                {isSuccessStatus(t.status) && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                                {isPendingStatus(t.status) && <Clock className="w-3.5 h-3.5 text-amber-400" />}
+                                {isCancelledStatus(t.status) && <RotateCcw className="w-3.5 h-3.5 text-purple-400" />}
+                                {!isSuccessStatus(t.status) && !isPendingStatus(t.status) && !isCancelledStatus(t.status) && (
+                                  <XCircle className="w-3.5 h-3.5 text-red-400" />
+                                )}
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-4 px-5 text-xs text-[#8888aa] font-mono">{t.timestamp}</td>
+                            <td className="py-4 px-5 text-xs text-[#8888aa] font-mono">{t.date}</td>
+                            <td className="py-4 px-5 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
                             <td className="py-4 px-5 text-right">
                               <button
                                 onClick={() => setSelectedTxn(t)}
@@ -964,13 +1026,14 @@ export default function DashboardPage() {
                         <th className="py-3.5 px-4">Payment Mode</th>
                         <th className="py-3.5 px-4">Amount</th>
                         <th className="py-3.5 px-4">Status</th>
-                        <th className="py-3.5 px-4">Timestamp</th>
+                        <th className="py-3.5 px-4">Date</th>
+                        <th className="py-3.5 px-4">Time</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
                       {reportFilteredRecords.length === 0 ? (
                         <tr>
-                          <td colSpan={7} className="py-10 text-center text-[#8888aa]">
+                          <td colSpan={8} className="py-10 text-center text-[#8888aa]">
                             No transactions match the selected date range and filter criteria.
                           </td>
                         </tr>
@@ -985,17 +1048,26 @@ export default function DashboardPage() {
                             <td className="py-3.5 px-4">
                               <span
                                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono inline-flex items-center gap-1 border ${
-                                  t.status === "SUCCESS"
+                                  isSuccessStatus(t.status)
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                    : t.status === "PENDING"
+                                    : isPendingStatus(t.status)
                                     ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                    : isCancelledStatus(t.status)
+                                    ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
                                     : "bg-red-500/10 text-red-400 border-red-500/30"
                                 }`}
                               >
+                                {isSuccessStatus(t.status) && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
+                                {isPendingStatus(t.status) && <Clock className="w-3 h-3 text-amber-400" />}
+                                {isCancelledStatus(t.status) && <RotateCcw className="w-3 h-3 text-purple-400" />}
+                                {!isSuccessStatus(t.status) && !isPendingStatus(t.status) && !isCancelledStatus(t.status) && (
+                                  <XCircle className="w-3 h-3 text-red-400" />
+                                )}
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-3.5 px-4 text-xs text-[#8888aa] font-mono">{t.timestamp}</td>
+                            <td className="py-3.5 px-4 text-xs text-[#8888aa] font-mono">{t.date}</td>
+                            <td className="py-3.5 px-4 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
                           </tr>
                         ))
                       )}
@@ -1078,8 +1150,13 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
-                  <span className="text-[#8888aa]">Timestamp:</span>
-                  <span className="text-slate-300">{selectedTxn.timestamp}</span>
+                  <span className="text-[#8888aa]">Date:</span>
+                  <span className="text-white font-bold">{selectedTxn.date}</span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
+                  <span className="text-[#8888aa]">Time:</span>
+                  <span className="text-indigo-300 font-bold">{selectedTxn.time}</span>
                 </div>
               </div>
 
