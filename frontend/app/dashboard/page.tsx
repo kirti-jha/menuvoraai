@@ -31,7 +31,8 @@ import {
   Menu,
   Sparkles,
   Copy,
-  Check
+  Check,
+  FileCode
 } from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
@@ -42,6 +43,7 @@ import {
   exportTransactionsCSV,
   fetchAllPosTransactions,
   formatRupees,
+  truncateId,
   API_BASE_URL 
 } from "@/lib/api";
 
@@ -92,7 +94,9 @@ export default function DashboardPage() {
   // Transactions State
   const [transactions, setTransactions] = useState<TransactionRecord[]>(INITIAL_TRANSACTIONS);
   const [selectedTxn, setSelectedTxn] = useState<TransactionRecord | null>(null);
+  const [viewingLogTxn, setViewingLogTxn] = useState<TransactionRecord | null>(null);
   const [copiedTxnId, setCopiedTxnId] = useState(false);
+  const [copiedLog, setCopiedLog] = useState(false);
 
   // Filter States for Transactions Tab
   const [txnSearchQuery, setTxnSearchQuery] = useState("");
@@ -746,7 +750,7 @@ export default function DashboardPage() {
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.03] border-y border-white/[0.08]">
                       <tr>
-                        <th className="py-3.5 px-4">Txn ID</th>
+                        <th className="py-3.5 px-4">Reference ID</th>
                         <th className="py-3.5 px-4">Customer</th>
                         <th className="py-3.5 px-4">Amount</th>
                         <th className="py-3.5 px-4">Mode</th>
@@ -758,7 +762,22 @@ export default function DashboardPage() {
                     <tbody className="divide-y divide-white/[0.06]">
                       {transactions.slice(0, 5).map((t) => (
                         <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-4 px-4 font-mono font-bold text-indigo-300">{t.id}</td>
+                          <td className="py-4 px-4">
+                            <button
+                              onClick={() => setSelectedTxn(t)}
+                              className="text-left group/id focus:outline-none"
+                              title="Click to view full transaction details"
+                            >
+                              <div className="font-mono text-xs font-bold text-indigo-300 group-hover/id:text-indigo-200 group-hover/id:underline flex items-center gap-1.5">
+                                <span>{truncateId(t.id)}</span>
+                                <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-mono uppercase">TXN</span>
+                              </div>
+                              <div className="font-mono text-[11px] text-[#8888aa] group-hover/id:text-slate-300 flex items-center gap-1.5 mt-0.5">
+                                <span>{truncateId(t.orderRef)}</span>
+                                <span className="text-[9px] px-1 py-0.2 rounded bg-white/[0.06] text-[#8888aa] font-mono uppercase">ORD</span>
+                              </div>
+                            </button>
+                          </td>
                           <td className="py-4 px-4">
                             <div className="font-semibold text-slate-200">{t.customerName}</div>
                             <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
@@ -855,8 +874,7 @@ export default function DashboardPage() {
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.04] border-b border-white/[0.08]">
                       <tr>
-                        <th className="py-4 px-5">Transaction ID</th>
-                        <th className="py-4 px-5">Order Ref</th>
+                        <th className="py-4 px-5">Reference ID</th>
                         <th className="py-4 px-5">Customer Info</th>
                         <th className="py-4 px-5">Payment Mode</th>
                         <th className="py-4 px-5">Amount</th>
@@ -869,15 +887,29 @@ export default function DashboardPage() {
                     <tbody className="divide-y divide-white/[0.06]">
                       {filteredTransactions.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="py-12 text-center text-[#8888aa]">
+                          <td colSpan={8} className="py-12 text-center text-[#8888aa]">
                             No transaction records found matching your filters.
                           </td>
                         </tr>
                       ) : (
                         filteredTransactions.map((t) => (
                           <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-4 px-5 font-mono font-bold text-indigo-300">{t.id}</td>
-                            <td className="py-4 px-5 font-mono text-xs text-[#8888aa]">{t.orderRef}</td>
+                            <td className="py-4 px-5">
+                              <button
+                                onClick={() => setSelectedTxn(t)}
+                                className="text-left group/id focus:outline-none"
+                                title="Click to view transaction details"
+                              >
+                                <div className="font-mono text-xs font-bold text-indigo-300 group-hover/id:text-indigo-200 group-hover/id:underline flex items-center gap-1.5">
+                                  <span>{truncateId(t.id)}</span>
+                                  <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-mono uppercase">TXN</span>
+                                </div>
+                                <div className="font-mono text-[11px] text-[#8888aa] group-hover/id:text-slate-300 flex items-center gap-1.5 mt-0.5">
+                                  <span>{truncateId(t.orderRef)}</span>
+                                  <span className="text-[9px] px-1 py-0.2 rounded bg-white/[0.06] text-[#8888aa] font-mono uppercase">ORD</span>
+                                </div>
+                              </button>
+                            </td>
                             <td className="py-4 px-5">
                               <div className="font-semibold text-slate-200">{t.customerName}</div>
                               <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
@@ -908,13 +940,23 @@ export default function DashboardPage() {
                             <td className="py-4 px-5 text-xs text-[#8888aa] font-mono">{t.date}</td>
                             <td className="py-4 px-5 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
                             <td className="py-4 px-5 text-right">
-                              <button
-                                onClick={() => setSelectedTxn(t)}
-                                className="p-2 rounded-lg bg-white/[0.05] hover:bg-indigo-600/30 text-indigo-300 hover:text-white transition-all"
-                                title="Inspect Transaction"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => setSelectedTxn(t)}
+                                  className="p-2 rounded-xl bg-white/[0.05] hover:bg-indigo-600/30 text-indigo-300 hover:text-white transition-all"
+                                  title="Inspect Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => setViewingLogTxn(t)}
+                                  className="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all"
+                                  title="View Backend Payload Log"
+                                >
+                                  <FileCode className="w-3.5 h-3.5" />
+                                  <span>View Log</span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -1053,14 +1095,14 @@ export default function DashboardPage() {
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.04] border-b border-white/[0.08]">
                       <tr>
-                        <th className="py-3.5 px-4">Txn ID</th>
-                        <th className="py-3.5 px-4">Order Ref</th>
+                        <th className="py-3.5 px-4">Reference ID</th>
                         <th className="py-3.5 px-4">Customer Name</th>
                         <th className="py-3.5 px-4">Payment Mode</th>
                         <th className="py-3.5 px-4">Amount</th>
                         <th className="py-3.5 px-4">Status</th>
                         <th className="py-3.5 px-4">Date</th>
                         <th className="py-3.5 px-4">Time</th>
+                        <th className="py-3.5 px-4 text-right">Log</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -1073,8 +1115,22 @@ export default function DashboardPage() {
                       ) : (
                         reportFilteredRecords.map((t) => (
                           <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-3.5 px-4 font-mono font-bold text-indigo-300">{t.id}</td>
-                            <td className="py-3.5 px-4 font-mono text-xs text-[#8888aa]">{t.orderRef}</td>
+                            <td className="py-3.5 px-4">
+                              <button
+                                onClick={() => setSelectedTxn(t)}
+                                className="text-left group/id focus:outline-none"
+                                title="Click to view transaction details"
+                              >
+                                <div className="font-mono text-xs font-bold text-indigo-300 group-hover/id:text-indigo-200 group-hover/id:underline flex items-center gap-1.5">
+                                  <span>{truncateId(t.id)}</span>
+                                  <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-mono uppercase">TXN</span>
+                                </div>
+                                <div className="font-mono text-[11px] text-[#8888aa] group-hover/id:text-slate-300 flex items-center gap-1.5 mt-0.5">
+                                  <span>{truncateId(t.orderRef)}</span>
+                                  <span className="text-[9px] px-1 py-0.2 rounded bg-white/[0.06] text-[#8888aa] font-mono uppercase">ORD</span>
+                                </div>
+                              </button>
+                            </td>
                             <td className="py-3.5 px-4 font-semibold text-slate-200">{t.customerName}</td>
                             <td className="py-3.5 px-4 text-xs font-mono text-slate-300">{t.paymentMode}</td>
                             <td className="py-3.5 px-4 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
@@ -1101,6 +1157,16 @@ export default function DashboardPage() {
                             </td>
                             <td className="py-3.5 px-4 text-xs text-[#8888aa] font-mono">{t.date}</td>
                             <td className="py-3.5 px-4 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
+                            <td className="py-3.5 px-4 text-right">
+                              <button
+                                onClick={() => setViewingLogTxn(t)}
+                                className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono font-semibold flex items-center gap-1 transition-all ml-auto"
+                                title="View Payload Log"
+                              >
+                                <FileCode className="w-3 h-3" />
+                                <span>Log</span>
+                              </button>
+                            </td>
                           </tr>
                         ))
                       )}
@@ -1193,12 +1259,115 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    const txn = selectedTxn;
+                    setSelectedTxn(null);
+                    setViewingLogTxn(txn);
+                  }}
+                  className="flex-1 py-3 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                >
+                  <FileCode className="w-4 h-4" />
+                  <span>View Raw Payload Log</span>
+                </button>
+
                 <button
                   onClick={() => setSelectedTxn(null)}
-                  className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all"
+                  className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all"
                 >
-                  Close Inspector
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Raw Payload Log Viewer Modal */}
+      <AnimatePresence>
+        {viewingLogTxn && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setViewingLogTxn(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-2xl glass rounded-3xl border border-emerald-500/30 p-6 space-y-4 shadow-2xl z-10 max-h-[90vh] flex flex-col"
+            >
+              <div className="flex items-center justify-between border-b border-emerald-500/20 pb-4 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <FileCode className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                      Transaction Payload Log
+                    </h3>
+                    <p className="text-xs font-mono text-emerald-300">
+                      {viewingLogTxn.id} • {viewingLogTxn.orderRef}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setViewingLogTxn(null)}
+                  className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="bg-[#090a15] border border-white/[0.08] rounded-2xl p-4 font-mono text-xs text-emerald-300 overflow-x-auto max-h-96 flex-1 selection:bg-emerald-500 selection:text-black">
+                <pre>
+                  {JSON.stringify(
+                    viewingLogTxn.rawLog || {
+                      transactionId: viewingLogTxn.id,
+                      externalRefNumber: viewingLogTxn.orderRef,
+                      customerName: viewingLogTxn.customerName,
+                      customerEmail: viewingLogTxn.customerEmail,
+                      customerMobileNumber: viewingLogTxn.customerPhone || "N/A",
+                      amount: viewingLogTxn.amount,
+                      paymentMode: viewingLogTxn.paymentMode,
+                      status: viewingLogTxn.status,
+                      deviceId: viewingLogTxn.deviceId || "EZETAP_POS_DEVICE_01",
+                      timestamp: viewingLogTxn.timestamp,
+                      date: viewingLogTxn.date,
+                      time: viewingLogTxn.time,
+                      gatewayBridge: "Menuvora AI POS Bridge / Ezetap Webhook"
+                    },
+                    null,
+                    2
+                  )}
+                </pre>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 shrink-0">
+                <button
+                  onClick={() => {
+                    const logData = viewingLogTxn.rawLog || viewingLogTxn;
+                    navigator.clipboard.writeText(JSON.stringify(logData, null, 2));
+                    setCopiedLog(true);
+                    setTimeout(() => setCopiedLog(false), 2000);
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-md shadow-indigo-600/30"
+                >
+                  {copiedLog ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedLog ? "Copied Log JSON!" : "Copy Log JSON"}</span>
+                </button>
+
+                <button
+                  onClick={() => setViewingLogTxn(null)}
+                  className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all"
+                >
+                  Close Viewer
                 </button>
               </div>
             </motion.div>

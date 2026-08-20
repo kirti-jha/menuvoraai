@@ -14,7 +14,17 @@ export interface TransactionRecord {
   timestamp: string; // Raw ISO timestamp string
   date: string; // YYYY-MM-DD format
   time: string; // HH:mm:ss format
+  rawLog?: any; // Full raw backend JSON object
 }
+
+/**
+ * Truncate long transaction or order reference IDs to short preview strings
+ */
+export const truncateId = (idStr: string, leadLength = 4, tailLength = 4): string => {
+  if (!idStr) return "";
+  if (idStr.length <= leadLength + tailLength + 3) return idStr;
+  return `${idStr.substring(0, leadLength)}...${idStr.slice(-tailLength)}`;
+};
 
 /**
  * Format raw ISO timestamps cleanly into separate Date (YYYY-MM-DD) and Time (12h/24h) strings
@@ -248,6 +258,7 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
             timestamp: String(rawTime),
             date: item.date || date,
             time: item.time || time,
+            rawLog: item,
           });
         });
       }
@@ -283,6 +294,7 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
             timestamp: String(rawTime),
             date: date,
             time: time,
+            rawLog: item,
           });
         });
       }
