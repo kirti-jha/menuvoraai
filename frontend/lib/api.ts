@@ -207,6 +207,15 @@ export const cancelPosPayment = async (
 };
 
 /**
+ * Format numeric values to clean Indian currency string without NaN or concatenation glitches
+ */
+export const formatRupees = (val: any): string => {
+  const num = typeof val === "number" ? val : parseFloat(String(val || 0));
+  if (isNaN(num)) return "0";
+  return num.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+};
+
+/**
  * Fetch All Live POS Transactions (For Admin Dashboard / Order History)
  */
 export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> => {
@@ -223,13 +232,16 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
           const { date, time } = formatTxnDateTime(rawTime);
           const normStatus = item.status ? String(item.status).trim().toUpperCase() : "SUCCESS";
 
+          const rawAmt = typeof item.amount === "number" ? item.amount : parseFloat(String(item.amount || 0));
+          const safeAmount = isNaN(rawAmt) ? 0 : rawAmt;
+
           records.push({
             id: item.transactionId || item.id || `TXN-${Date.now()}`,
             orderRef: item.externalRefNumber || item.orderRef || "ORD-POS",
             customerName: item.customerName || item.customerEmail?.split("@")[0] || "POS Customer",
             customerEmail: item.customerEmail || "customer@menuvora.ai",
             customerPhone: item.customerMobileNumber || item.customerPhone || "",
-            amount: item.amount || 0,
+            amount: safeAmount,
             paymentMode: item.paymentMode || "CARD",
             status: normStatus,
             deviceId: item.deviceId || "EZETAP_POS_DEVICE_01",
@@ -255,13 +267,16 @@ export const fetchAllPosTransactions = async (): Promise<TransactionRecord[]> =>
           const { date, time } = formatTxnDateTime(rawTime);
           const normStatus = item.status ? String(item.status).trim().toUpperCase() : "COMPLETED";
 
+          const rawAmt = typeof item.amount === "number" ? item.amount : parseFloat(String(item.amount || 0));
+          const safeAmount = isNaN(rawAmt) ? 0 : rawAmt;
+
           records.push({
             id: item.order_id || item.id || `ORD-${Date.now()}`,
             orderRef: item.order_id || item.plan_name || "WEB-ORDER",
             customerName: item.customer_name || "Customer",
             customerEmail: item.customer_email || "user@menuvora.ai",
             customerPhone: item.customer_phone || "",
-            amount: item.amount || 0,
+            amount: safeAmount,
             paymentMode: item.payment_mode || "ONLINE",
             status: normStatus,
             deviceId: item.device_id || "WEB",

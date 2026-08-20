@@ -41,6 +41,7 @@ import {
   TransactionRecord, 
   exportTransactionsCSV,
   fetchAllPosTransactions,
+  formatRupees,
   API_BASE_URL 
 } from "@/lib/api";
 
@@ -181,7 +182,7 @@ export default function DashboardPage() {
   const totalRevenue = useMemo(() => {
     return transactions
       .filter((t) => isSuccessStatus(t.status))
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   }, [transactions]);
 
   const successfulTxns = useMemo(() => {
@@ -190,7 +191,7 @@ export default function DashboardPage() {
 
   const totalTxnCount = transactions.length;
   const successRate = totalTxnCount > 0 ? Math.round((successfulTxns / totalTxnCount) * 100) : 0;
-  const avgTransactionValue = successfulTxns > 0 ? Math.round(totalRevenue / successfulTxns) : 0;
+  const avgTransactionValue = successfulTxns > 0 ? totalRevenue / successfulTxns : 0;
 
   // Payment Method Dynamic Metrics
   const upiTxns = useMemo(() => {
@@ -200,7 +201,7 @@ export default function DashboardPage() {
   }, [transactions]);
 
   const upiRevenue = useMemo(() => {
-    return upiTxns.reduce((sum, t) => sum + t.amount, 0);
+    return upiTxns.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   }, [upiTxns]);
 
   const cardTxns = useMemo(() => {
@@ -212,7 +213,7 @@ export default function DashboardPage() {
   }, [transactions]);
 
   const cardRevenue = useMemo(() => {
-    return cardTxns.reduce((sum, t) => sum + t.amount, 0);
+    return cardTxns.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   }, [cardTxns]);
 
   const refundTxns = useMemo(() => {
@@ -222,7 +223,7 @@ export default function DashboardPage() {
   }, [transactions]);
 
   const refundAmount = useMemo(() => {
-    return refundTxns.reduce((sum, t) => sum + t.amount, 0);
+    return refundTxns.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   }, [refundTxns]);
 
   // Date-wise Aggregation for Graph
@@ -250,7 +251,7 @@ export default function DashboardPage() {
             return matchesDate && matchesStatus && matchesMode;
           });
 
-          const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
+          const amount = dayTxns.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
           dates.push({ dateStr, label, amount, count: dayTxns.length });
           curr.setDate(curr.getDate() + 1);
         }
@@ -276,7 +277,7 @@ export default function DashboardPage() {
           return matchesDate && matchesStatus && matchesMode;
         });
 
-        const amount = dayTxns.reduce((sum, t) => sum + t.amount, 0);
+        const amount = dayTxns.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
         dates.push({ dateStr, label, amount, count: dayTxns.length });
       }
     }
@@ -285,7 +286,7 @@ export default function DashboardPage() {
   }, [transactions, graphDateMode, graphCustomStart, graphCustomEnd, graphStatusFilter, graphModeFilter]);
 
   const peakDailyRevenue = useMemo(() => {
-    return Math.max(0, ...graphData.map((d) => d.amount));
+    return Math.max(0, ...graphData.map((d) => Number(d.amount) || 0));
   }, [graphData]);
 
   const maxGraphAmount = useMemo(() => {
@@ -293,22 +294,22 @@ export default function DashboardPage() {
   }, [peakDailyRevenue]);
 
   const totalGraphAmount = useMemo(() => {
-    return graphData.reduce((sum, d) => sum + d.amount, 0);
+    return graphData.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
   }, [graphData]);
 
   const avgGraphAmount = useMemo(() => {
-    return Math.round(totalGraphAmount / (graphData.length || 1));
+    return graphData.length > 0 ? totalGraphAmount / graphData.length : 0;
   }, [totalGraphAmount, graphData]);
 
   // Report Metrics
   const reportTotalRevenue = useMemo(() => {
     return reportFilteredRecords
-      .filter((t) => t.status === "SUCCESS" || t.status === "COMPLETED" || t.status === "PAID")
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => isSuccessStatus(t.status))
+      .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   }, [reportFilteredRecords]);
 
   const reportSuccessCount = reportFilteredRecords.filter(
-    (t) => t.status === "SUCCESS" || t.status === "COMPLETED" || t.status === "PAID"
+    (t) => isSuccessStatus(t.status)
   ).length;
 
   if (!isAuthenticated || !user) {
@@ -424,7 +425,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-3xl font-heading font-extrabold text-white tracking-tight">
-                    ₹ {totalRevenue.toLocaleString("en-IN")}
+                    ₹ {formatRupees(totalRevenue)}
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-emerald-400 font-semibold">
                     <TrendingUp className="w-4 h-4" />
@@ -483,7 +484,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-3xl font-heading font-extrabold text-white tracking-tight">
-                    ₹ {avgTransactionValue.toLocaleString("en-IN")}
+                    ₹ {formatRupees(avgTransactionValue)}
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-blue-300 font-mono">
                     <span>Per order average</span>
@@ -499,7 +500,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">UPI Payments</span>
-                    <span className="text-xl font-bold text-white">₹ {upiRevenue.toLocaleString("en-IN")}</span>
+                    <span className="text-xl font-bold text-white">₹ {formatRupees(upiRevenue)}</span>
                     <span className="text-[11px] text-indigo-400 block font-mono">{upiTxns.length} successful payments</span>
                   </div>
                 </div>
@@ -510,7 +511,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">Card / Razorpay POS</span>
-                    <span className="text-xl font-bold text-white">₹ {cardRevenue.toLocaleString("en-IN")}</span>
+                    <span className="text-xl font-bold text-white">₹ {formatRupees(cardRevenue)}</span>
                     <span className="text-[11px] text-purple-400 block font-mono">{cardTxns.length} POS terminal charges</span>
                   </div>
                 </div>
@@ -521,7 +522,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">Refunds & Cancellations</span>
-                    <span className="text-xl font-bold text-white">₹ {refundAmount.toLocaleString("en-IN")}</span>
+                    <span className="text-xl font-bold text-white">₹ {formatRupees(refundAmount)}</span>
                     <span className="text-[11px] text-amber-400 block font-mono">{refundTxns.length} processed refunds</span>
                   </div>
                 </div>
@@ -619,7 +620,7 @@ export default function DashboardPage() {
                   <div className="p-4 rounded-2xl glass-light border border-indigo-500/20 flex items-center justify-between">
                     <div>
                       <span className="text-[11px] font-mono text-[#8888aa] block">Period Total Revenue</span>
-                      <span className="text-xl font-extrabold text-white">₹ {totalGraphAmount.toLocaleString("en-IN")}</span>
+                      <span className="text-xl font-extrabold text-white">₹ {formatRupees(totalGraphAmount)}</span>
                     </div>
                     <IndianRupee className="w-6 h-6 text-indigo-400/50" />
                   </div>
@@ -627,7 +628,7 @@ export default function DashboardPage() {
                   <div className="p-4 rounded-2xl glass-light border border-purple-500/20 flex items-center justify-between">
                     <div>
                       <span className="text-[11px] font-mono text-[#8888aa] block">Peak Daily Revenue</span>
-                      <span className="text-xl font-extrabold text-emerald-400">₹ {peakDailyRevenue.toLocaleString("en-IN")}</span>
+                      <span className="text-xl font-extrabold text-emerald-400">₹ {formatRupees(peakDailyRevenue)}</span>
                     </div>
                     <TrendingUp className="w-6 h-6 text-emerald-400/50" />
                   </div>
@@ -635,7 +636,7 @@ export default function DashboardPage() {
                   <div className="p-4 rounded-2xl glass-light border border-blue-500/20 flex items-center justify-between">
                     <div>
                       <span className="text-[11px] font-mono text-[#8888aa] block">Avg Daily Revenue</span>
-                      <span className="text-xl font-extrabold text-blue-300">₹ {avgGraphAmount.toLocaleString("en-IN")}</span>
+                      <span className="text-xl font-extrabold text-blue-300">₹ {formatRupees(avgGraphAmount)}</span>
                     </div>
                     <Receipt className="w-6 h-6 text-blue-400/50" />
                   </div>
@@ -663,7 +664,7 @@ export default function DashboardPage() {
                           {/* Hover Tooltip */}
                           <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none bg-slate-900/95 border border-indigo-500/40 text-white p-2 rounded-xl text-xs font-mono text-center shadow-xl z-30 whitespace-nowrap">
                             <div className="font-bold text-indigo-300">{item.label}</div>
-                            <div className="text-emerald-400 font-extrabold">₹ {item.amount.toLocaleString("en-IN")}</div>
+                            <div className="text-emerald-400 font-extrabold">₹ {formatRupees(item.amount)}</div>
                             <div className="text-[10px] text-slate-400">{item.count} transactions</div>
                           </div>
 
@@ -850,7 +851,7 @@ export default function DashboardPage() {
                               <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
                             </td>
                             <td className="py-4 px-5 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                            <td className="py-4 px-5 font-extrabold text-white">₹ {t.amount.toLocaleString("en-IN")}</td>
+                            <td className="py-4 px-5 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
                             <td className="py-4 px-5">
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
@@ -987,7 +988,7 @@ export default function DashboardPage() {
                 <div className="glass p-5 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
                   <div>
                     <span className="text-xs text-[#8888aa] font-mono block">Filtered Range Revenue</span>
-                    <span className="text-2xl font-extrabold text-emerald-400">₹ {reportTotalRevenue.toLocaleString("en-IN")}</span>
+                    <span className="text-2xl font-extrabold text-emerald-400">₹ {formatRupees(reportTotalRevenue)}</span>
                   </div>
                   <IndianRupee className="w-7 h-7 text-emerald-400/50" />
                 </div>
@@ -1044,7 +1045,7 @@ export default function DashboardPage() {
                             <td className="py-3.5 px-4 font-mono text-xs text-[#8888aa]">{t.orderRef}</td>
                             <td className="py-3.5 px-4 font-semibold text-slate-200">{t.customerName}</td>
                             <td className="py-3.5 px-4 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                            <td className="py-3.5 px-4 font-extrabold text-white">₹ {t.amount.toLocaleString("en-IN")}</td>
+                            <td className="py-3.5 px-4 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
                             <td className="py-3.5 px-4">
                               <span
                                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono inline-flex items-center gap-1 border ${
@@ -1141,7 +1142,7 @@ export default function DashboardPage() {
 
                 <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
                   <span className="text-[#8888aa]">Total Amount:</span>
-                  <span className="text-emerald-400 text-sm font-extrabold">₹ {selectedTxn.amount.toLocaleString("en-IN")}</span>
+                  <span className="text-emerald-400 text-sm font-extrabold">₹ {formatRupees(selectedTxn.amount)}</span>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
