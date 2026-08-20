@@ -132,20 +132,31 @@ export default function DashboardPage() {
     }
   };
 
+const getTodayDateString = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getPastDateString = (daysAgo: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
   // Filter States for Transactions Tab
   const [txnSearchQuery, setTxnSearchQuery] = useState("");
   const [txnStatusFilter, setTxnStatusFilter] = useState<string>("ALL");
   const [txnModeFilter, setTxnModeFilter] = useState<string>("ALL");
 
   // Filter States for Reports / Records Tab (Defaults up to Present / Today)
-  const [reportStartDate, setReportStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().substring(0, 10);
-  });
-  const [reportEndDate, setReportEndDate] = useState(() => {
-    return new Date().toISOString().substring(0, 10);
-  });
+  const [reportStartDate, setReportStartDate] = useState(getPastDateString(30));
+  const [reportEndDate, setReportEndDate] = useState(getTodayDateString());
   const [reportStatusFilter, setReportStatusFilter] = useState<string>("ALL");
   const [reportModeFilter, setReportModeFilter] = useState<string>("ALL");
 
@@ -153,14 +164,15 @@ export default function DashboardPage() {
   const [graphStatusFilter, setGraphStatusFilter] = useState<string>("ALL");
   const [graphModeFilter, setGraphModeFilter] = useState<string>("ALL");
   const [graphDateMode, setGraphDateMode] = useState<"7" | "14" | "30" | "CUSTOM">("7");
-  const [graphCustomStart, setGraphCustomStart] = useState<string>(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 7);
-    return d.toISOString().substring(0, 10);
-  });
-  const [graphCustomEnd, setGraphCustomEnd] = useState<string>(() => {
-    return new Date().toISOString().substring(0, 10);
-  });
+  const [graphCustomStart, setGraphCustomStart] = useState<string>(getPastDateString(7));
+  const [graphCustomEnd, setGraphCustomEnd] = useState<string>(getTodayDateString());
+
+  // Force Present Today Date Sync on Mount
+  useEffect(() => {
+    const today = getTodayDateString();
+    setReportEndDate(today);
+    setGraphCustomEnd(today);
+  }, []);
 
   // Live POS Transactions Auto-Refresh Polling (Every 5 Seconds)
   useEffect(() => {
