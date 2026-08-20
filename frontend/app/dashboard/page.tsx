@@ -137,9 +137,15 @@ export default function DashboardPage() {
   const [txnStatusFilter, setTxnStatusFilter] = useState<string>("ALL");
   const [txnModeFilter, setTxnModeFilter] = useState<string>("ALL");
 
-  // Filter States for Reports / Records Tab
-  const [reportStartDate, setReportStartDate] = useState("2026-08-14");
-  const [reportEndDate, setReportEndDate] = useState("2026-08-17");
+  // Filter States for Reports / Records Tab (Defaults up to Present / Today)
+  const [reportStartDate, setReportStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().substring(0, 10);
+  });
+  const [reportEndDate, setReportEndDate] = useState(() => {
+    return new Date().toISOString().substring(0, 10);
+  });
   const [reportStatusFilter, setReportStatusFilter] = useState<string>("ALL");
   const [reportModeFilter, setReportModeFilter] = useState<string>("ALL");
 
@@ -147,8 +153,14 @@ export default function DashboardPage() {
   const [graphStatusFilter, setGraphStatusFilter] = useState<string>("ALL");
   const [graphModeFilter, setGraphModeFilter] = useState<string>("ALL");
   const [graphDateMode, setGraphDateMode] = useState<"7" | "14" | "30" | "CUSTOM">("7");
-  const [graphCustomStart, setGraphCustomStart] = useState<string>("2026-08-10");
-  const [graphCustomEnd, setGraphCustomEnd] = useState<string>("2026-08-17");
+  const [graphCustomStart, setGraphCustomStart] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    return d.toISOString().substring(0, 10);
+  });
+  const [graphCustomEnd, setGraphCustomEnd] = useState<string>(() => {
+    return new Date().toISOString().substring(0, 10);
+  });
 
   // Live POS Transactions Auto-Refresh Polling (Every 5 Seconds)
   useEffect(() => {
