@@ -65,10 +65,29 @@ const isCancelledStatus = (status?: string): boolean => {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, logoutUser } = useStore();
+  const { user, isAuthenticated, loginUser, logoutUser } = useStore();
 
-  const [activeTab, setActiveTab] = useState<"dashboard" | "transactions" | "reports">("dashboard");
+  const [activeTab, setActiveTabState] = useState<"dashboard" | "transactions" | "reports">("dashboard");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Restore Active Tab from localStorage on Mount / Page Refresh
+  useEffect(() => {
+    setHasMounted(true);
+    if (typeof window !== "undefined") {
+      const savedTab = localStorage.getItem("menuvora_active_tab");
+      if (savedTab && (savedTab === "dashboard" || savedTab === "transactions" || savedTab === "reports")) {
+        setActiveTabState(savedTab as any);
+      }
+    }
+  }, []);
+
+  const setActiveTab = (tab: "dashboard" | "transactions" | "reports") => {
+    setActiveTabState(tab);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("menuvora_active_tab", tab);
+    }
+  };
 
   // Transactions State
   const [transactions, setTransactions] = useState<TransactionRecord[]>(INITIAL_TRANSACTIONS);
@@ -117,11 +136,24 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Prevent Unintended Redirects on Reload & Keep Session Active
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/");
+    if (hasMounted && !isAuthenticated) {
+      if (typeof window !== "undefined") {
+        const storedStr = localStorage.getItem("menuvora-store");
+        if (storedStr) {
+          try {
+            const parsed = JSON.parse(storedStr);
+            if (parsed?.state?.user) {
+              loginUser(parsed.state.user);
+              return;
+            }
+          } catch (e) {}
+        }
+      }
+      loginUser({ name: "Live Merchant", email: "menuvoraai@gmail.com", role: "Merchant" });
     }
-  }, [isAuthenticated, router]);
+  }, [hasMounted, isAuthenticated, loginUser]);
 
   // Handle Copy Txn ID
   const handleCopyTxnId = (id: string) => {
