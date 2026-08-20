@@ -974,31 +974,35 @@ export default function DashboardPage() {
                             <td className="py-4 px-5 text-xs text-[#8888aa] font-mono">{t.date}</td>
                             <td className="py-4 px-5 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
                             <td className="py-4 px-5 text-right">
-                              <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                              <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => setSelectedTxn(t)}
-                                  className="p-2 rounded-xl bg-white/[0.05] hover:bg-indigo-600/30 text-indigo-300 hover:text-white transition-all"
+                                  className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-indigo-600/30 text-indigo-300 hover:text-white border border-white/[0.08] transition-all"
                                   title="Inspect Details"
                                 >
                                   <Eye className="w-4 h-4" />
                                 </button>
-                                <button
-                                  onClick={() => setViewingLogTxn(t)}
-                                  className="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all"
-                                  title="View Backend Payload Log"
-                                >
-                                  <FileCode className="w-3.5 h-3.5" />
-                                  <span>View Log</span>
-                                </button>
-                                <button
-                                  onClick={() => handleCheckStatus(t)}
-                                  disabled={checkingStatusId === t.id}
-                                  className="px-2.5 py-1.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all disabled:opacity-50"
-                                  title="Check Live Razorpay / Gateway Status"
-                                >
-                                  <RefreshCw className={`w-3.5 h-3.5 ${checkingStatusId === t.id ? "animate-spin" : ""}`} />
-                                  <span>{checkingStatusId === t.id ? "Checking..." : "Check Status"}</span>
-                                </button>
+
+                                <div className="flex flex-col gap-1 items-end">
+                                  <button
+                                    onClick={() => setViewingLogTxn(t)}
+                                    className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-semibold flex items-center gap-1 transition-all"
+                                    title="View Backend Payload Log"
+                                  >
+                                    <FileCode className="w-3 h-3" />
+                                    <span>Log</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleCheckStatus(t)}
+                                    disabled={checkingStatusId === t.id}
+                                    className="px-2.5 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 text-xs font-mono font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                                    title="Check Live Razorpay Status"
+                                  >
+                                    <RefreshCw className={`w-3 h-3 ${checkingStatusId === t.id ? "animate-spin" : ""}`} />
+                                    <span>{checkingStatusId === t.id ? "..." : "Status"}</span>
+                                  </button>
+                                </div>
                               </div>
                             </td>
                           </tr>
