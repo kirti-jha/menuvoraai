@@ -929,17 +929,17 @@ const getPastDateString = (daysAgo: number) => {
               {/* Transactions Data Table */}
               <div className="glass rounded-3xl border border-[rgba(99,102,241,0.2)] overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-[960px] w-full text-left text-sm text-slate-300">
+                  <table className="w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.04] border-b border-white/[0.08]">
                       <tr>
-                        <th className="py-4 px-4">Reference ID</th>
-                        <th className="py-4 px-4">Customer Info</th>
-                        <th className="py-4 px-3">Payment Mode</th>
-                        <th className="py-4 px-3">Amount</th>
-                        <th className="py-4 px-3">Status</th>
-                        <th className="py-4 px-3">Date</th>
-                        <th className="py-4 px-3">Time</th>
-                        <th className="py-4 px-4 text-right min-w-[130px]">Action</th>
+                        <th className="py-4 px-3">Reference ID</th>
+                        <th className="py-4 px-3">Customer Info</th>
+                        <th className="py-4 px-2">Payment Mode</th>
+                        <th className="py-4 px-2">Amount</th>
+                        <th className="py-4 px-2">Status</th>
+                        <th className="py-4 px-2">Date</th>
+                        <th className="py-4 px-2">Time</th>
+                        <th className="py-4 px-3 text-right min-w-[110px]">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -952,7 +952,7 @@ const getPastDateString = (daysAgo: number) => {
                       ) : (
                         filteredTransactions.map((t) => (
                           <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-4 px-4">
+                            <td className="py-4 px-3">
                               <button
                                 onClick={() => setSelectedTxn(t)}
                                 className="text-left group/id focus:outline-none"
@@ -968,15 +968,15 @@ const getPastDateString = (daysAgo: number) => {
                                 </div>
                               </button>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="py-4 px-3">
                               <div className="font-semibold text-slate-200">{t.customerName}</div>
                               <div className="text-xs text-[#777799] font-mono">{t.customerEmail}</div>
                             </td>
-                            <td className="py-4 px-3 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                            <td className="py-4 px-3 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
-                            <td className="py-4 px-3">
+                            <td className="py-4 px-2 text-xs font-mono text-slate-300">{t.paymentMode}</td>
+                            <td className="py-4 px-2 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
+                            <td className="py-4 px-2">
                               <span
-                                className={`px-3 py-1 rounded-full text-xs font-bold font-mono inline-flex items-center gap-1.5 border ${
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold font-mono inline-flex items-center gap-1 border ${
                                   isSuccessStatus(t.status)
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                     : isPendingStatus(t.status)
@@ -986,18 +986,18 @@ const getPastDateString = (daysAgo: number) => {
                                     : "bg-red-500/10 text-red-400 border-red-500/30"
                                 }`}
                               >
-                                {isSuccessStatus(t.status) && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
-                                {isPendingStatus(t.status) && <Clock className="w-3.5 h-3.5 text-amber-400" />}
-                                {isCancelledStatus(t.status) && <RotateCcw className="w-3.5 h-3.5 text-purple-400" />}
+                                {isSuccessStatus(t.status) && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
+                                {isPendingStatus(t.status) && <Clock className="w-3 h-3 text-amber-400" />}
+                                {isCancelledStatus(t.status) && <RotateCcw className="w-3 h-3 text-purple-400" />}
                                 {!isSuccessStatus(t.status) && !isPendingStatus(t.status) && !isCancelledStatus(t.status) && (
-                                  <XCircle className="w-3.5 h-3.5 text-red-400" />
+                                  <XCircle className="w-3 h-3 text-red-400" />
                                 )}
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-4 px-3 text-xs text-[#8888aa] font-mono">{t.date}</td>
-                            <td className="py-4 px-3 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
-                            <td className="py-4 px-4 text-right min-w-[130px]">
+                            <td className="py-4 px-2 text-[11px] text-[#8888aa] font-mono">{t.date}</td>
+                            <td className="py-4 px-2 text-[11px] text-indigo-300 font-mono font-semibold">{t.time}</td>
+                            <td className="py-4 px-3 text-right min-w-[110px]">
                               <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => setSelectedTxn(t)}
@@ -1166,14 +1166,14 @@ const getPastDateString = (daysAgo: number) => {
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="text-xs text-[#8888aa] uppercase font-mono bg-white/[0.04] border-b border-white/[0.08]">
                       <tr>
-                        <th className="py-3.5 px-4">Reference ID</th>
-                        <th className="py-3.5 px-4">Customer Name</th>
-                        <th className="py-3.5 px-4">Payment Mode</th>
-                        <th className="py-3.5 px-4">Amount</th>
-                        <th className="py-3.5 px-4">Status</th>
-                        <th className="py-3.5 px-4">Date</th>
-                        <th className="py-3.5 px-4">Time</th>
-                        <th className="py-3.5 px-4 text-right">Log</th>
+                        <th className="py-3.5 px-3">Reference ID</th>
+                        <th className="py-3.5 px-3">Customer Name</th>
+                        <th className="py-3.5 px-2">Payment Mode</th>
+                        <th className="py-3.5 px-2">Amount</th>
+                        <th className="py-3.5 px-2">Status</th>
+                        <th className="py-3.5 px-2">Date</th>
+                        <th className="py-3.5 px-2">Time</th>
+                        <th className="py-3.5 px-3 text-right min-w-[110px]">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -1186,7 +1186,7 @@ const getPastDateString = (daysAgo: number) => {
                       ) : (
                         reportFilteredRecords.map((t) => (
                           <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-3.5 px-4">
+                            <td className="py-3.5 px-3">
                               <button
                                 onClick={() => setSelectedTxn(t)}
                                 className="text-left group/id focus:outline-none"
@@ -1202,12 +1202,12 @@ const getPastDateString = (daysAgo: number) => {
                                 </div>
                               </button>
                             </td>
-                            <td className="py-3.5 px-4 font-semibold text-slate-200">{t.customerName}</td>
-                            <td className="py-3.5 px-4 text-xs font-mono text-slate-300">{t.paymentMode}</td>
-                            <td className="py-3.5 px-4 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
-                            <td className="py-3.5 px-4">
+                            <td className="py-3.5 px-3 font-semibold text-slate-200">{t.customerName}</td>
+                            <td className="py-3.5 px-2 text-xs font-mono text-slate-300">{t.paymentMode}</td>
+                            <td className="py-3.5 px-2 font-extrabold text-white">₹ {formatRupees(t.amount)}</td>
+                            <td className="py-3.5 px-2">
                               <span
-                                className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono inline-flex items-center gap-1 border ${
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono inline-flex items-center gap-1 border ${
                                   isSuccessStatus(t.status)
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                     : isPendingStatus(t.status)
@@ -1226,9 +1226,9 @@ const getPastDateString = (daysAgo: number) => {
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-3.5 px-4 text-xs text-[#8888aa] font-mono">{t.date}</td>
-                            <td className="py-3.5 px-4 text-xs text-indigo-300 font-mono font-semibold">{t.time}</td>
-                            <td className="py-3.5 px-4 text-right">
+                            <td className="py-3.5 px-2 text-[11px] text-[#8888aa] font-mono">{t.date}</td>
+                            <td className="py-3.5 px-2 text-[11px] text-indigo-300 font-mono font-semibold">{t.time}</td>
+                            <td className="py-3.5 px-3 text-right min-w-[110px]">
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
                                   onClick={() => setViewingLogTxn(t)}
